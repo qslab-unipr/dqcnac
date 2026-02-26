@@ -1,0 +1,263 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dqcnac.compiler.gate_grouping module &mdash; DQC-NAC 0.1.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=92734c54"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="dqcnac.compiler.local_manager module" href="dqcnac.compiler.local_manager.html" />
+    <link rel="prev" title="dqcnac.compiler.compile_manager module" href="dqcnac.compiler.compile_manager.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            DQC-NAC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../readme.html">DQC-NAC: a compiler for Distributed Quantum Computing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#installation">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#usage">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#api-docs">API Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#acknowledgements">Acknowledgements</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">dqcnac API</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#main-package">Main package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="modules.html">dqcnac</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="dqcnac.html">dqcnac package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">DQC-NAC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">dqcnac API</a></li>
+          <li class="breadcrumb-item"><a href="modules.html">dqcnac</a></li>
+          <li class="breadcrumb-item"><a href="dqcnac.html">dqcnac package</a></li>
+          <li class="breadcrumb-item"><a href="dqcnac.compiler.html">dqcnac.compiler package</a></li>
+      <li class="breadcrumb-item active">dqcnac.compiler.gate_grouping module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/dqcnac.compiler.gate_grouping.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-dqcnac.compiler.gate_grouping">
+<span id="dqcnac-compiler-gate-grouping-module"></span><h1>dqcnac.compiler.gate_grouping module<a class="headerlink" href="#module-dqcnac.compiler.gate_grouping" title="Link to this heading"></a></h1>
+<p>Gate grouping module.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="dqcnac.compiler.gate_grouping.GateGrouping">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dqcnac.compiler.gate_grouping.</span></span><span class="sig-name descname"><span class="pre">GateGrouping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QuantumCircuit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes_mapping</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">network</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.network.network.html#dqcnac.network.network.Network" title="dqcnac.network.network.Network"><span class="pre">Network</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_gates_in_a_group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_swaps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dqcnac/compiler/gate_grouping.html#GateGrouping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.compiler.gate_grouping.GateGrouping" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class checks for gates that could share an EPR pair and groups them together</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.compiler.gate_grouping.GateGrouping.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QuantumCircuit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes_mapping</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">network</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.network.network.html#dqcnac.network.network.Network" title="dqcnac.network.network.Network"><span class="pre">Network</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_gates_in_a_group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_swaps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dqcnac/compiler/gate_grouping.html#GateGrouping.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.compiler.gate_grouping.GateGrouping.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initializes the class with the parameters given</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>circuit</strong> (<em>QuantumCircuit</em>) – Quantum circuit to be compiled</p></li>
+<li><p><strong>nodes_mapping</strong> (<em>dict</em>) – Mapping from qubit to nodes</p></li>
+<li><p><strong>network</strong> (<a class="reference internal" href="dqcnac.network.network.html#dqcnac.network.network.Network" title="dqcnac.network.network.Network"><em>Network</em></a>) – The network configuration</p></li>
+<li><p><strong>max_gates_in_a_group</strong> (<em>int</em>) – The maximum number of gates that can be in a single group</p></li>
+<li><p><strong>check_swaps</strong> (<em>bool</em>) – Whether to check for swaps between gates</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.compiler.gate_grouping.GateGrouping.add_current_gate_to_new_circuit">
+<span class="sig-name descname"><span class="pre">add_current_gate_to_new_circuit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dqcnac/compiler/gate_grouping.html#GateGrouping.add_current_gate_to_new_circuit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.compiler.gate_grouping.GateGrouping.add_current_gate_to_new_circuit" title="Link to this definition"></a></dt>
+<dd><p>Adds current gate to the new circuit</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.compiler.gate_grouping.GateGrouping.add_gate_in_controlled">
+<span class="sig-name descname"><span class="pre">add_gate_in_controlled</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ind0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reg0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dqcnac/compiler/gate_grouping.html#GateGrouping.add_gate_in_controlled"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.compiler.gate_grouping.GateGrouping.add_gate_in_controlled" title="Link to this definition"></a></dt>
+<dd><p>Adds to the list of gates in the working memory that are using the given qubit as control</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ind0</strong> (<em>int</em>) – the index of the qubit</p></li>
+<li><p><strong>reg0</strong> (<em>str</em>) – the register of the qubit</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.compiler.gate_grouping.GateGrouping.add_to_circuit_and_reset">
+<span class="sig-name descname"><span class="pre">add_to_circuit_and_reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dqcnac/compiler/gate_grouping.html#GateGrouping.add_to_circuit_and_reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.compiler.gate_grouping.GateGrouping.add_to_circuit_and_reset" title="Link to this definition"></a></dt>
+<dd><p>Adds the working memory connected to the given qubit to the circuit, and then resets it</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ind</strong> (<em>int</em>) – the index of the qubit</p></li>
+<li><p><strong>reg</strong> (<em>str</em>) – the register of the qubit</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.compiler.gate_grouping.GateGrouping.as_instruction">
+<span class="sig-name descname"><span class="pre">as_instruction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">working_memory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Instruction</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Instruction</span></span></span><a class="reference internal" href="../_modules/dqcnac/compiler/gate_grouping.html#GateGrouping.as_instruction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.compiler.gate_grouping.GateGrouping.as_instruction" title="Link to this definition"></a></dt>
+<dd><p>Transforms a list of instructions into a single Instruction</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>working_memory</strong> (<em>list</em><em>[</em><em>Instruction</em><em>]</em>) – The list of instructions to be transformed</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The transformed instruction</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.compiler.gate_grouping.GateGrouping.can_commute">
+<span class="sig-name descname"><span class="pre">can_commute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gate1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CircuitInstruction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gate2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CircuitInstruction</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/dqcnac/compiler/gate_grouping.html#GateGrouping.can_commute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.compiler.gate_grouping.GateGrouping.can_commute" title="Link to this definition"></a></dt>
+<dd><p>Checks if the given gates are swappable</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gate1</strong> (<em>CircuitInstruction</em>) – the first gate</p></li>
+<li><p><strong>gate2</strong> (<em>CircuitInstruction</em>) – the second gate</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the gates are swappable, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.compiler.gate_grouping.GateGrouping.local_op">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">local_op</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes_mapping</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/dqcnac/compiler/gate_grouping.html#GateGrouping.local_op"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.compiler.gate_grouping.GateGrouping.local_op" title="Link to this definition"></a></dt>
+<dd><p>Returns True if the operation is local</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.compiler.gate_grouping.GateGrouping.reset_if_max_depth">
+<span class="sig-name descname"><span class="pre">reset_if_max_depth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dqcnac/compiler/gate_grouping.html#GateGrouping.reset_if_max_depth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.compiler.gate_grouping.GateGrouping.reset_if_max_depth" title="Link to this definition"></a></dt>
+<dd><p>Checks if the working memory is at max depth: if it is, it resets it</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reg</strong> (<em>str</em>) – the register of the qubit</p></li>
+<li><p><strong>ind</strong> (<em>int</em>) – the index of the qubit</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.compiler.gate_grouping.GateGrouping.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QuantumCircuit</span></span></span><a class="reference internal" href="../_modules/dqcnac/compiler/gate_grouping.html#GateGrouping.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.compiler.gate_grouping.GateGrouping.run" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The circuit with the gates that could share an EPR pair grouped</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.compiler.gate_grouping.GateGrouping.set_controlled_with_gate">
+<span class="sig-name descname"><span class="pre">set_controlled_with_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ind0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reg1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reg0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dqcnac/compiler/gate_grouping.html#GateGrouping.set_controlled_with_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.compiler.gate_grouping.GateGrouping.set_controlled_with_gate" title="Link to this definition"></a></dt>
+<dd><p>Sets the current gate in the working memory as using the given qubit as control</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ind0</strong> (<em>int</em>) – the index of the controlled</p></li>
+<li><p><strong>reg0</strong> (<em>str</em>) – the register of the controlled qubit</p></li>
+<li><p><strong>reg1</strong> (<em>str</em>) – the register of the target qubit</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="dqcnac.compiler.compile_manager.html" class="btn btn-neutral float-left" title="dqcnac.compiler.compile_manager module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="dqcnac.compiler.local_manager.html" class="btn btn-neutral float-right" title="dqcnac.compiler.local_manager module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, QSLab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,701 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dqcnac.compiler.gate_grouping &mdash; DQC-NAC 0.1.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=92734c54"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            DQC-NAC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html">DQC-NAC: a compiler for Distributed Quantum Computing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html#installation">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html#usage">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html#api-docs">API Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html#acknowledgements">Acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">dqcnac API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">DQC-NAC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">dqcnac.compiler.gate_grouping</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for dqcnac.compiler.gate_grouping</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Gate grouping module.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuantumCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit.circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">CircuitInstruction</span><span class="p">,</span> <span class="n">Clbit</span><span class="p">,</span> <span class="n">Instruction</span><span class="p">,</span> <span class="n">Qubit</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..network</span><span class="w"> </span><span class="kn">import</span> <span class="n">Network</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_ControlWithInstr</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class used internally to have a memory connected to a control qubit&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_qubits</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">qubits_list</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Qubit</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes the class&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">controlled</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">working_memory</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_qubits</span> <span class="o">=</span> <span class="n">num_qubits</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qubits</span> <span class="o">=</span> <span class="n">qubits_list</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_if_controlled</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks if the qubit is being used as control&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">controlled</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_control</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">instruction</span><span class="p">:</span> <span class="n">CircuitInstruction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the qubit as controlled&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">working_memory</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">instruction</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">controlled</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_control</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instruction</span><span class="p">:</span> <span class="n">CircuitInstruction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds instruction to a qubit used as control&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">working_memory</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">instruction</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_target</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the target qubit&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_control_as_instruction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Instruction</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the gates connected to the qubit as a single instruction&quot;&quot;&quot;</span>
+        <span class="n">circuit</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">instruction</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">working_memory</span><span class="p">:</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">instruction</span><span class="p">)</span>
+        <span class="n">instruction_output</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">to_instruction</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">instruction_output</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_control</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the gates connected to the qubit as a list&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">working_memory</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset_control</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the qubit to its initial state&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">controlled</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">working_memory</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_Target</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class used internally to have all the information when a qubit is targeted in one place.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes the class&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">control_reg</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">control_ind</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">targeted</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_if_targeted</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks if the qubit is being targeted&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">targeted</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_target</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">control_reg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">control_ind</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the qubit as being targeted by an input qubit&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">control_reg</span> <span class="o">=</span> <span class="n">control_reg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">control_ind</span> <span class="o">=</span> <span class="n">control_ind</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_control</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the gate connected to the qubit&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">control_reg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">control_ind</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_QPUWithControls</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class used internally to hold all the information about a QPU and its connections&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">id_qpu</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">num_qubits</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_ebits</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">connected_qpus</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">qubits_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes the class&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_qubits</span> <span class="o">=</span> <span class="n">num_qubits</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qubits_list</span> <span class="o">=</span> <span class="n">qubits_list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_id_qpu</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">id_qpu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_controlled</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">_ControlWithInstr</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">qubit</span><span class="p">:</span> <span class="n">_ControlWithInstr</span><span class="p">(</span><span class="n">num_qubits</span><span class="p">,</span> <span class="n">qubits_list</span><span class="p">)</span> <span class="k">for</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="n">qubits_list</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_targeted</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">_Target</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">qubit</span><span class="p">:</span> <span class="n">_Target</span><span class="p">()</span> <span class="k">for</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="n">qubits_list</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ebits_as_control</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_ebits</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ebits_as_target</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_ebits</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connected_qpus</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">connected_qpus</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">control_ebits_used</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the ebits currently used as control&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ebits_as_control</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ebits_as_control</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">ebits_left</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the remaining ebits&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ebits_as_control</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_occupy_ebit_as_control</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Occupies an ebit connected to a target qubit&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ebits_left</span><span class="p">():</span>
+            <span class="n">ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ebits_as_control</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ebits_as_control</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="n">target</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_free_ebit_as_control</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Frees an ebit connected to a target qubit&quot;&quot;&quot;</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ebits_as_control</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ebits_as_control</span><span class="p">[</span><span class="n">position</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_if_targeting</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks if the ebit is being targeted&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">target</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ebits_as_control</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">qpu_that_targets_this</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the qpu that targets this one&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ebits_as_target</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_qubit_targeting</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reg_target</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the index of the qubit targeted in the register reg_target, or -1 if not found&quot;&quot;&quot;</span>
+        <span class="n">ind_t</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qubits_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ind</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_controlled</span> <span class="ow">and</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_controlled</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span><span class="o">.</span><span class="n">get_target</span><span class="p">()</span> <span class="o">==</span> <span class="n">reg_target</span>
+            <span class="p">):</span>
+                <span class="n">ind_t</span> <span class="o">=</span> <span class="n">ind</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="n">ind_t</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;no qubit targeting found&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ind_t</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_targeted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns true if the qubit in position is being targeted&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_targeted</span><span class="p">[</span><span class="n">position</span><span class="p">]</span><span class="o">.</span><span class="n">check_if_targeted</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_targeted_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the control from which the qubit in position is being targeted&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_targeted</span><span class="p">[</span><span class="n">position</span><span class="p">]</span><span class="o">.</span><span class="n">get_control</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_targeted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">control_reg</span><span class="p">,</span> <span class="n">control_ind</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the qubit as being targeted by an input qubit&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_targeted</span><span class="p">[</span><span class="n">position</span><span class="p">]</span><span class="o">.</span><span class="n">set_target</span><span class="p">(</span><span class="n">control_reg</span><span class="p">,</span> <span class="n">control_ind</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_controlled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns true if the qubit is being used as control&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_controlled</span><span class="p">[</span><span class="n">position</span><span class="p">]</span><span class="o">.</span><span class="n">check_if_controlled</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_target</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the target qubit of the qubit in position&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_controlled</span><span class="p">[</span><span class="n">position</span><span class="p">]</span><span class="o">.</span><span class="n">get_target</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_controlled</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">instruction</span><span class="p">:</span> <span class="n">CircuitInstruction</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the qubit as control of the input instruction, with relative target&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_controlled</span><span class="p">[</span><span class="n">position</span><span class="p">]</span><span class="o">.</span><span class="n">set_control</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">instruction</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_occupy_ebit_as_control</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_controlled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">instruction</span><span class="p">:</span> <span class="n">CircuitInstruction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds the instruction to the controlled qubit&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_controlled</span><span class="p">[</span><span class="n">position</span><span class="p">]</span><span class="o">.</span><span class="n">add_control</span><span class="p">(</span><span class="n">instruction</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_depth_of_circuit_of_controlled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the depth of the circuit relative to the controlled qubit&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_controlled</span><span class="p">[</span><span class="n">position</span><span class="p">]</span><span class="o">.</span><span class="n">get_control</span><span class="p">())</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_controlled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the instruction relative to the controlled qubit&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_controlled</span><span class="p">[</span><span class="n">position</span><span class="p">]</span><span class="o">.</span><span class="n">get_control</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset_controlled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the controlled qubit&quot;&quot;&quot;</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_controlled</span><span class="p">[</span><span class="n">position</span><span class="p">]</span><span class="o">.</span><span class="n">get_target</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_controlled</span><span class="p">[</span><span class="n">position</span><span class="p">]</span><span class="o">.</span><span class="n">reset_control</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_free_ebit_as_control</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="GateGrouping">
+<a class="viewcode-back" href="../../../api/dqcnac.compiler.gate_grouping.html#dqcnac.compiler.gate_grouping.GateGrouping">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GateGrouping</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This class checks for gates that could share an EPR pair and groups them together&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="GateGrouping.__init__">
+<a class="viewcode-back" href="../../../api/dqcnac.compiler.gate_grouping.html#dqcnac.compiler.gate_grouping.GateGrouping.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">circuit</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span>
+        <span class="n">nodes_mapping</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Qubit</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">network</span><span class="p">:</span> <span class="n">Network</span><span class="p">,</span>
+        <span class="n">max_gates_in_a_group</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">check_swaps</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the class with the parameters given</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            circuit (QuantumCircuit): Quantum circuit to be compiled</span>
+<span class="sd">            nodes_mapping (dict): Mapping from qubit to nodes</span>
+<span class="sd">            network (Network): The network configuration</span>
+<span class="sd">            max_gates_in_a_group (int): The maximum number of gates that can be in a single group</span>
+<span class="sd">            check_swaps (bool): Whether to check for swaps between gates</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qubits_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Qubit</span><span class="p">]</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">qubits</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clbits_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Clbit</span><span class="p">]</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">clbits</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">new_circuit</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qubits_list</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">clbits_list</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">CircuitInstruction</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">:</span> <span class="n">Network</span> <span class="o">=</span> <span class="n">network</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">partitions</span> <span class="o">=</span> <span class="p">{</span><span class="n">node</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes_mapping</span> <span class="o">=</span> <span class="n">nodes_mapping</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_swaps</span> <span class="o">=</span> <span class="n">check_swaps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_non_local_gates</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">max_gates_in_a_group</span> <span class="k">if</span> <span class="n">max_gates_in_a_group</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">2</span><span class="o">**</span><span class="mi">15</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">q</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_mapping</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">partitions</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">_QPUWithControls</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">_QPUWithControls</span><span class="p">(</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">mem_cap</span><span class="p">,</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">ebits</span><span class="p">),</span>
+                <span class="nb">list</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">connections</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">partitions</span><span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="GateGrouping.local_op">
+<a class="viewcode-back" href="../../../api/dqcnac.compiler.gate_grouping.html#dqcnac.compiler.gate_grouping.GateGrouping.local_op">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">local_op</span><span class="p">(</span><span class="n">qargs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">nodes_mapping</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns True if the operation is local&quot;&quot;&quot;</span>
+        <span class="c1"># qargs already mapped with mapping</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">qargs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">nodes_mapping</span><span class="p">[</span><span class="n">qargs</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">==</span> <span class="n">nodes_mapping</span><span class="p">[</span><span class="n">qargs</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span></div>
+
+
+<div class="viewcode-block" id="GateGrouping.run">
+<a class="viewcode-back" href="../../../api/dqcnac.compiler.gate_grouping.html#dqcnac.compiler.gate_grouping.GateGrouping.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuantumCircuit</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            The circuit with the gates that could share an EPR pair grouped</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">):</span>  <span class="c1"># last one is None</span>
+            <span class="c1"># The idea is to check for every gate if it uses controlled qubits.</span>
+            <span class="c1"># If it uses one, we need to check that the target is in the same qpu.</span>
+            <span class="c1"># If both conditions are true, we can add the new gate to the multi-gate instructions.</span>
+            <span class="c1"># If the gate does something to the control but does not target the same qpu, we must stop.</span>
+            <span class="c1"># There is a multi-gate instruction for every qpu where the control can be.</span>
+            <span class="n">gate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">gate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">gate</span><span class="o">.</span><span class="n">qubits</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">reg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_mapping</span><span class="p">[</span><span class="n">gate</span><span class="o">.</span><span class="n">qubits</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+                <span class="n">ind</span> <span class="o">=</span> <span class="n">gate</span><span class="o">.</span><span class="n">qubits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg</span><span class="p">]</span><span class="o">.</span><span class="n">is_controlled</span><span class="p">(</span><span class="n">ind</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_commute</span><span class="p">(</span><span class="n">gate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">continue</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">add_to_circuit_and_reset</span><span class="p">(</span><span class="n">ind</span><span class="p">,</span> <span class="n">reg</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">add_current_gate_to_new_circuit</span><span class="p">()</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg</span><span class="p">]</span><span class="o">.</span><span class="n">is_targeted</span><span class="p">(</span><span class="n">ind</span><span class="p">):</span>
+                    <span class="n">reg_c</span><span class="p">,</span> <span class="n">ind_c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg</span><span class="p">]</span><span class="o">.</span><span class="n">is_targeted_from</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">gate</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;measure&quot;</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">add_to_circuit_and_reset</span><span class="p">(</span><span class="n">ind_c</span><span class="p">,</span> <span class="n">reg_c</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">add_current_gate_to_new_circuit</span><span class="p">()</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">add_gate_in_controlled</span><span class="p">(</span><span class="n">ind_c</span><span class="p">,</span> <span class="n">reg_c</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">reset_if_max_depth</span><span class="p">(</span><span class="n">reg_c</span><span class="p">,</span> <span class="n">ind_c</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">add_current_gate_to_new_circuit</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_op</span><span class="p">(</span><span class="n">gate</span><span class="o">.</span><span class="n">qubits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_mapping</span><span class="p">):</span>
+                <span class="n">reg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_mapping</span><span class="p">[</span><span class="n">gate</span><span class="o">.</span><span class="n">qubits</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+                <span class="n">ind0</span> <span class="o">=</span> <span class="n">gate</span><span class="o">.</span><span class="n">qubits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span>
+                <span class="n">ind1</span> <span class="o">=</span> <span class="n">gate</span><span class="o">.</span><span class="n">qubits</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">index</span>
+
+                <span class="k">match</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg</span><span class="p">]</span><span class="o">.</span><span class="n">is_controlled</span><span class="p">(</span><span class="n">ind0</span><span class="p">),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg</span><span class="p">]</span><span class="o">.</span><span class="n">is_controlled</span><span class="p">(</span><span class="n">ind1</span><span class="p">),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg</span><span class="p">]</span><span class="o">.</span><span class="n">is_targeted</span><span class="p">(</span><span class="n">ind0</span><span class="p">),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg</span><span class="p">]</span><span class="o">.</span><span class="n">is_targeted</span><span class="p">(</span><span class="n">ind1</span><span class="p">),</span>
+                <span class="p">):</span>
+                    <span class="k">case</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                        <span class="c1"># only first is controlled</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_commute</span><span class="p">(</span><span class="n">gate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+=</span> <span class="mi">1</span>
+                            <span class="k">continue</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">add_to_circuit_and_reset</span><span class="p">(</span><span class="n">ind0</span><span class="p">,</span> <span class="n">reg</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">add_current_gate_to_new_circuit</span><span class="p">()</span>
+
+                    <span class="k">case</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                        <span class="c1"># only second is controlled</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_commute</span><span class="p">(</span><span class="n">gate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+=</span> <span class="mi">1</span>
+                            <span class="k">continue</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">add_to_circuit_and_reset</span><span class="p">(</span><span class="n">ind1</span><span class="p">,</span> <span class="n">reg</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">add_current_gate_to_new_circuit</span><span class="p">()</span>
+
+                    <span class="k">case</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                        <span class="c1"># both are controlled</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_commute</span><span class="p">(</span><span class="n">gate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+=</span> <span class="mi">1</span>
+                            <span class="k">continue</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">add_to_circuit_and_reset</span><span class="p">(</span><span class="n">ind0</span><span class="p">,</span> <span class="n">reg</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">add_to_circuit_and_reset</span><span class="p">(</span><span class="n">ind1</span><span class="p">,</span> <span class="n">reg</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">add_current_gate_to_new_circuit</span><span class="p">()</span>
+
+                    <span class="k">case</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+                        <span class="c1"># first controlled, second targeted</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_commute</span><span class="p">(</span><span class="n">gate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+=</span> <span class="mi">1</span>
+                            <span class="k">continue</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">add_to_circuit_and_reset</span><span class="p">(</span><span class="n">ind0</span><span class="p">,</span> <span class="n">reg</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">add_gate_in_controlled</span><span class="p">(</span><span class="n">ind1</span><span class="p">,</span> <span class="n">reg</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">reset_if_max_depth</span><span class="p">(</span><span class="n">reg</span><span class="p">,</span> <span class="n">ind1</span><span class="p">)</span>
+
+                    <span class="k">case</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                        <span class="c1"># second controlled, first targeted</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_commute</span><span class="p">(</span><span class="n">gate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+=</span> <span class="mi">1</span>
+                            <span class="k">continue</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">add_to_circuit_and_reset</span><span class="p">(</span><span class="n">ind1</span><span class="p">,</span> <span class="n">reg</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">add_gate_in_controlled</span><span class="p">(</span><span class="n">ind0</span><span class="p">,</span> <span class="n">reg</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">reset_if_max_depth</span><span class="p">(</span><span class="n">reg</span><span class="p">,</span> <span class="n">ind0</span><span class="p">)</span>
+
+                    <span class="k">case</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+                        <span class="c1"># both are targeted</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_commute</span><span class="p">(</span><span class="n">gate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+=</span> <span class="mi">1</span>
+                            <span class="k">continue</span>
+                        <span class="n">reg_c</span><span class="p">,</span> <span class="n">ind_c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg</span><span class="p">]</span><span class="o">.</span><span class="n">is_targeted_from</span><span class="p">(</span><span class="n">ind1</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">add_to_circuit_and_reset</span><span class="p">(</span><span class="n">ind_c</span><span class="p">,</span> <span class="n">reg_c</span><span class="p">)</span>
+                        <span class="n">reg_c0</span><span class="p">,</span> <span class="n">ind_c0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg</span><span class="p">]</span><span class="o">.</span><span class="n">is_targeted_from</span><span class="p">(</span><span class="n">ind0</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">add_gate_in_controlled</span><span class="p">(</span><span class="n">ind_c0</span><span class="p">,</span> <span class="n">reg_c0</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">reset_if_max_depth</span><span class="p">(</span><span class="n">reg_c0</span><span class="p">,</span> <span class="n">ind_c0</span><span class="p">)</span>
+                    <span class="k">case</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                        <span class="c1"># only first is targeted</span>
+                        <span class="n">reg_c0</span><span class="p">,</span> <span class="n">ind_c0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg</span><span class="p">]</span><span class="o">.</span><span class="n">is_targeted_from</span><span class="p">(</span><span class="n">ind0</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">add_gate_in_controlled</span><span class="p">(</span><span class="n">ind_c0</span><span class="p">,</span> <span class="n">reg_c0</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">reset_if_max_depth</span><span class="p">(</span><span class="n">reg_c0</span><span class="p">,</span> <span class="n">ind_c0</span><span class="p">)</span>
+                    <span class="k">case</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+                        <span class="c1"># only second is targeted</span>
+                        <span class="n">reg_c1</span><span class="p">,</span> <span class="n">ind_c1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg</span><span class="p">]</span><span class="o">.</span><span class="n">is_targeted_from</span><span class="p">(</span><span class="n">ind1</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">add_gate_in_controlled</span><span class="p">(</span><span class="n">ind_c1</span><span class="p">,</span> <span class="n">reg_c1</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">reset_if_max_depth</span><span class="p">(</span><span class="n">reg_c1</span><span class="p">,</span> <span class="n">ind_c1</span><span class="p">)</span>
+                    <span class="k">case</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                        <span class="c1"># both are neither targeted nor controlled</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">add_current_gate_to_new_circuit</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># non-local case</span>
+                <span class="n">reg0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_mapping</span><span class="p">[</span><span class="n">gate</span><span class="o">.</span><span class="n">qubits</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+                <span class="n">reg1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_mapping</span><span class="p">[</span><span class="n">gate</span><span class="o">.</span><span class="n">qubits</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+                <span class="n">ind0</span> <span class="o">=</span> <span class="n">gate</span><span class="o">.</span><span class="n">qubits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span>
+                <span class="n">ind1</span> <span class="o">=</span> <span class="n">gate</span><span class="o">.</span><span class="n">qubits</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">index</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg0</span><span class="p">]</span><span class="o">.</span><span class="n">is_targeted</span><span class="p">(</span><span class="n">ind0</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_commute</span><span class="p">(</span><span class="n">gate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">continue</span>
+                    <span class="n">reg_c</span><span class="p">,</span> <span class="n">ind_c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg0</span><span class="p">]</span><span class="o">.</span><span class="n">is_targeted_from</span><span class="p">(</span><span class="n">ind0</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">add_to_circuit_and_reset</span><span class="p">(</span><span class="n">ind_c</span><span class="p">,</span> <span class="n">reg_c</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg0</span><span class="p">]</span><span class="o">.</span><span class="n">is_controlled</span><span class="p">(</span><span class="n">ind0</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg0</span><span class="p">]</span><span class="o">.</span><span class="n">get_target</span><span class="p">(</span><span class="n">ind0</span><span class="p">)</span> <span class="o">==</span> <span class="n">reg1</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">add_gate_in_controlled</span><span class="p">(</span><span class="n">ind0</span><span class="p">,</span> <span class="n">reg0</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg1</span><span class="p">]</span><span class="o">.</span><span class="n">is_controlled</span><span class="p">(</span>
+                            <span class="n">ind1</span>
+                        <span class="p">):</span>  <span class="c1"># check if target is controlled</span>
+                            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_commute</span><span class="p">(</span><span class="n">gate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+=</span> <span class="mi">1</span>
+                                <span class="k">continue</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">add_to_circuit_and_reset</span><span class="p">(</span><span class="n">ind1</span><span class="p">,</span> <span class="n">reg1</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg1</span><span class="p">]</span><span class="o">.</span><span class="n">set_targeted</span><span class="p">(</span><span class="n">ind1</span><span class="p">,</span> <span class="n">reg0</span><span class="p">,</span> <span class="n">ind0</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg1</span><span class="p">]</span><span class="o">.</span><span class="n">is_targeted</span><span class="p">(</span>
+                            <span class="n">ind1</span>
+                        <span class="p">):</span>  <span class="c1"># check if target is targeted</span>
+                            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg1</span><span class="p">]</span><span class="o">.</span><span class="n">is_targeted_from</span><span class="p">(</span><span class="n">ind1</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">reg0</span><span class="p">,</span> <span class="n">ind0</span><span class="p">):</span>
+                                <span class="k">continue</span>  <span class="c1"># everything has already been done</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_commute</span><span class="p">(</span>
+                                    <span class="n">gate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                                <span class="p">):</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+=</span> <span class="mi">1</span>
+                                    <span class="k">continue</span>
+                                <span class="n">reg2</span><span class="p">,</span> <span class="n">ind2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg1</span><span class="p">]</span><span class="o">.</span><span class="n">is_targeted_from</span><span class="p">(</span><span class="n">ind1</span><span class="p">)</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">add_to_circuit_and_reset</span><span class="p">(</span><span class="n">ind2</span><span class="p">,</span> <span class="n">reg2</span><span class="p">)</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg1</span><span class="p">]</span><span class="o">.</span><span class="n">set_targeted</span><span class="p">(</span><span class="n">ind1</span><span class="p">,</span> <span class="n">reg0</span><span class="p">,</span> <span class="n">ind0</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg1</span><span class="p">]</span><span class="o">.</span><span class="n">set_targeted</span><span class="p">(</span><span class="n">ind1</span><span class="p">,</span> <span class="n">reg0</span><span class="p">,</span> <span class="n">ind0</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">reset_if_max_depth</span><span class="p">(</span><span class="n">reg0</span><span class="p">,</span> <span class="n">ind0</span><span class="p">)</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_commute</span><span class="p">(</span><span class="n">gate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+=</span> <span class="mi">1</span>
+                            <span class="k">continue</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">add_to_circuit_and_reset</span><span class="p">(</span><span class="n">ind0</span><span class="p">,</span> <span class="n">reg0</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">set_controlled_with_gate</span><span class="p">(</span><span class="n">ind0</span><span class="p">,</span> <span class="n">reg1</span><span class="p">,</span> <span class="n">reg0</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg1</span><span class="p">]</span><span class="o">.</span><span class="n">is_targeted</span><span class="p">(</span><span class="n">ind1</span><span class="p">):</span>
+                            <span class="n">reg2</span><span class="p">,</span> <span class="n">ind2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg1</span><span class="p">]</span><span class="o">.</span><span class="n">is_targeted_from</span><span class="p">(</span><span class="n">ind1</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">new_circuit</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">as_instruction</span><span class="p">(</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg2</span><span class="p">]</span><span class="o">.</span><span class="n">get_controlled</span><span class="p">(</span><span class="n">ind2</span><span class="p">)</span>
+                                <span class="p">)</span>
+                            <span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg2</span><span class="p">]</span><span class="o">.</span><span class="n">reset_controlled</span><span class="p">(</span><span class="n">ind2</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg1</span><span class="p">]</span><span class="o">.</span><span class="n">set_targeted</span><span class="p">(</span><span class="n">ind1</span><span class="p">,</span> <span class="n">reg0</span><span class="p">,</span> <span class="n">ind0</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg0</span><span class="p">]</span><span class="o">.</span><span class="n">check_if_targeting</span><span class="p">(</span>
+                        <span class="n">reg1</span>
+                    <span class="p">):</span>  <span class="c1"># if we&#39;re targeting a qpu we&#39;re already targeting</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_commute</span><span class="p">(</span><span class="n">gate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+=</span> <span class="mi">1</span>
+                            <span class="k">continue</span>
+                        <span class="n">ind_t</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg0</span><span class="p">]</span><span class="o">.</span><span class="n">find_qubit_targeting</span><span class="p">(</span><span class="n">reg1</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">add_to_circuit_and_reset</span><span class="p">(</span><span class="n">ind_t</span><span class="p">,</span> <span class="n">reg0</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">set_controlled_with_gate</span><span class="p">(</span><span class="n">ind0</span><span class="p">,</span> <span class="n">reg1</span><span class="p">,</span> <span class="n">reg0</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg1</span><span class="p">]</span><span class="o">.</span><span class="n">set_targeted</span><span class="p">(</span><span class="n">ind1</span><span class="p">,</span> <span class="n">reg0</span><span class="p">,</span> <span class="n">ind0</span><span class="p">)</span>
+
+                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span>
+                        <span class="n">reg0</span>
+                    <span class="p">]</span><span class="o">.</span><span class="n">ebits_left</span><span class="p">():</span>  <span class="c1"># if we&#39;re not targeting the same qpu, but we still have ebits left</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">set_controlled_with_gate</span><span class="p">(</span><span class="n">ind0</span><span class="p">,</span> <span class="n">reg0</span><span class="p">,</span> <span class="n">reg0</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>  <span class="c1"># if we do not have ebits left we must try to free them</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg0</span><span class="p">]</span><span class="o">.</span><span class="n">control_ebits_used</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg0</span><span class="p">]</span><span class="o">.</span><span class="n">qubits_list</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg0</span><span class="p">]</span><span class="o">.</span><span class="n">is_controlled</span><span class="p">(</span><span class="n">ind</span><span class="p">):</span>
+                                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_commute</span><span class="p">(</span>
+                                        <span class="n">gate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                                    <span class="p">):</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+=</span> <span class="mi">1</span>
+                                        <span class="k">continue</span>
+                                    <span class="n">ind_c</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">ind</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">add_to_circuit_and_reset</span><span class="p">(</span><span class="n">ind_c</span><span class="p">,</span> <span class="n">reg0</span><span class="p">)</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">set_controlled_with_gate</span><span class="p">(</span><span class="n">ind0</span><span class="p">,</span> <span class="n">reg1</span><span class="p">,</span> <span class="n">reg0</span><span class="p">)</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg1</span><span class="p">]</span><span class="o">.</span><span class="n">set_targeted</span><span class="p">(</span><span class="n">ind1</span><span class="p">,</span> <span class="n">reg0</span><span class="p">,</span> <span class="n">ind0</span><span class="p">)</span>
+                                    <span class="k">break</span>
+                        <span class="k">else</span><span class="p">:</span>  <span class="c1"># if we have all ebits occupied as target</span>
+                            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_commute</span><span class="p">(</span><span class="n">gate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">+=</span> <span class="mi">1</span>
+                                <span class="k">continue</span>
+                            <span class="n">reg_c</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg0</span><span class="p">]</span><span class="o">.</span><span class="n">qpu_that_targets_this</span><span class="p">()</span>
+                            <span class="n">ind_c</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg_c</span><span class="p">]</span><span class="o">.</span><span class="n">find_qubit_targeting</span><span class="p">(</span><span class="n">reg0</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">add_to_circuit_and_reset</span><span class="p">(</span><span class="n">ind_c</span><span class="p">,</span> <span class="n">reg_c</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">set_controlled_with_gate</span><span class="p">(</span><span class="n">ind0</span><span class="p">,</span> <span class="n">reg1</span><span class="p">,</span> <span class="n">reg0</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg1</span><span class="p">]</span><span class="o">.</span><span class="n">set_targeted</span><span class="p">(</span><span class="n">ind1</span><span class="p">,</span> <span class="n">reg0</span><span class="p">,</span> <span class="n">ind0</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">qpu</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="c1"># final cleanup</span>
+            <span class="k">for</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="n">qpu</span><span class="o">.</span><span class="n">qubits_list</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">qpu</span><span class="o">.</span><span class="n">is_controlled</span><span class="p">(</span><span class="n">qubit</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">new_circuit</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">as_instruction</span><span class="p">(</span><span class="n">qpu</span><span class="o">.</span><span class="n">get_controlled</span><span class="p">(</span><span class="n">qubit</span><span class="p">)),</span>
+                        <span class="n">qargs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">qubits_list</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">qpu</span><span class="o">.</span><span class="n">reset_controlled</span><span class="p">(</span><span class="n">qubit</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_circuit</span></div>
+
+
+<div class="viewcode-block" id="GateGrouping.add_gate_in_controlled">
+<a class="viewcode-back" href="../../../api/dqcnac.compiler.gate_grouping.html#dqcnac.compiler.gate_grouping.GateGrouping.add_gate_in_controlled">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_gate_in_controlled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ind0</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg0</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds to the list of gates in the working memory that are using the given qubit as control</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ind0 (int): the index of the qubit</span>
+<span class="sd">            reg0 (str): the register of the qubit</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg0</span><span class="p">]</span><span class="o">.</span><span class="n">_add_controlled</span><span class="p">(</span><span class="n">ind0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="GateGrouping.set_controlled_with_gate">
+<a class="viewcode-back" href="../../../api/dqcnac.compiler.gate_grouping.html#dqcnac.compiler.gate_grouping.GateGrouping.set_controlled_with_gate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_controlled_with_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ind0</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reg0</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the current gate in the working memory as using the given qubit as control</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ind0 (int): the index of the controlled</span>
+<span class="sd">            reg0 (str): the register of the controlled qubit</span>
+<span class="sd">            reg1 (str): the register of the target qubit</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg0</span><span class="p">]</span><span class="o">.</span><span class="n">set_controlled</span><span class="p">(</span><span class="n">ind0</span><span class="p">,</span> <span class="n">reg1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="GateGrouping.add_current_gate_to_new_circuit">
+<a class="viewcode-back" href="../../../api/dqcnac.compiler.gate_grouping.html#dqcnac.compiler.gate_grouping.GateGrouping.add_current_gate_to_new_circuit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_current_gate_to_new_circuit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds current gate to the new circuit&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">new_circuit</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_gate</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="GateGrouping.as_instruction">
+<a class="viewcode-back" href="../../../api/dqcnac.compiler.gate_grouping.html#dqcnac.compiler.gate_grouping.GateGrouping.as_instruction">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">as_instruction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">working_memory</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Instruction</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Instruction</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Transforms a list of instructions into a single Instruction</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            working_memory (list[Instruction]): The list of instructions to be transformed</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The transformed instruction</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">circuit</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qubits_list</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">instruction</span> <span class="ow">in</span> <span class="n">working_memory</span><span class="p">:</span>
+            <span class="n">circuit</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">instruction</span><span class="p">)</span>
+        <span class="n">instruction_output</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">to_instruction</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">instruction_output</span></div>
+
+
+<div class="viewcode-block" id="GateGrouping.add_to_circuit_and_reset">
+<a class="viewcode-back" href="../../../api/dqcnac.compiler.gate_grouping.html#dqcnac.compiler.gate_grouping.GateGrouping.add_to_circuit_and_reset">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_to_circuit_and_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ind</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds the working memory connected to the given qubit to the circuit, and then resets it</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ind (int): the index of the qubit</span>
+<span class="sd">            reg (str): the register of the qubit</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">new_circuit</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">as_instruction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg</span><span class="p">]</span><span class="o">.</span><span class="n">get_controlled</span><span class="p">(</span><span class="n">ind</span><span class="p">)),</span>
+            <span class="n">qargs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">qubits_list</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg</span><span class="p">]</span><span class="o">.</span><span class="n">reset_controlled</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GateGrouping.reset_if_max_depth">
+<a class="viewcode-back" href="../../../api/dqcnac.compiler.gate_grouping.html#dqcnac.compiler.gate_grouping.GateGrouping.reset_if_max_depth">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset_if_max_depth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ind</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the working memory is at max depth: if it is, it resets it</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            reg (str): the register of the qubit</span>
+<span class="sd">            ind (int): the index of the qubit</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">qpus</span><span class="p">[</span><span class="n">reg</span><span class="p">]</span><span class="o">.</span><span class="n">_depth_of_circuit_of_controlled</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
+            <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_non_local_gates</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_to_circuit_and_reset</span><span class="p">(</span><span class="n">ind</span><span class="p">,</span> <span class="n">reg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GateGrouping.can_commute">
+<a class="viewcode-back" href="../../../api/dqcnac.compiler.gate_grouping.html#dqcnac.compiler.gate_grouping.GateGrouping.can_commute">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">can_commute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gate1</span><span class="p">:</span> <span class="n">CircuitInstruction</span><span class="p">,</span> <span class="n">gate2</span><span class="p">:</span> <span class="n">CircuitInstruction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the given gates are swappable</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            gate1 (CircuitInstruction): the first gate</span>
+<span class="sd">            gate2 (CircuitInstruction): the second gate</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            True if the gates are swappable, False otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># gate set: x, rx, z, rz, h, cz</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_swaps</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">gate1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">gate2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">gate1</span><span class="o">.</span><span class="n">qubits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">gate2</span><span class="o">.</span><span class="n">qubits</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">gate1</span><span class="o">.</span><span class="n">qubits</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">gate1</span><span class="o">.</span><span class="n">qubits</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">gate2</span><span class="o">.</span><span class="n">qubits</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">gate1</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;rz&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">}:</span>
+            <span class="k">return</span> <span class="n">gate2</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;rz&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="s2">&quot;cz&quot;</span><span class="p">}</span>
+        <span class="k">elif</span> <span class="n">gate1</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;cz&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">gate2</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;rz&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="s2">&quot;cz&quot;</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, QSLab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

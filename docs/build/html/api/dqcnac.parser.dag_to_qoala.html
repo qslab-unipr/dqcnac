@@ -1,0 +1,522 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dqcnac.parser.dag_to_qoala module &mdash; DQC-NAC 0.1.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=92734c54"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="dqcnac.stats package" href="dqcnac.stats.html" />
+    <link rel="prev" title="dqcnac.parser package" href="dqcnac.parser.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            DQC-NAC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../readme.html">DQC-NAC: a compiler for Distributed Quantum Computing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#installation">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#usage">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#api-docs">API Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#acknowledgements">Acknowledgements</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">dqcnac API</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#main-package">Main package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="modules.html">dqcnac</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="dqcnac.html">dqcnac package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">DQC-NAC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">dqcnac API</a></li>
+          <li class="breadcrumb-item"><a href="modules.html">dqcnac</a></li>
+          <li class="breadcrumb-item"><a href="dqcnac.html">dqcnac package</a></li>
+          <li class="breadcrumb-item"><a href="dqcnac.parser.html">dqcnac.parser package</a></li>
+      <li class="breadcrumb-item active">dqcnac.parser.dag_to_qoala module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/dqcnac.parser.dag_to_qoala.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-dqcnac.parser.dag_to_qoala">
+<span id="dqcnac-parser-dag-to-qoala-module"></span><h1>dqcnac.parser.dag_to_qoala module<a class="headerlink" href="#module-dqcnac.parser.dag_to_qoala" title="Link to this heading"></a></h1>
+<p>QuantumCircuit to QoalaPrograms parser call module.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="dqcnac.parser.dag_to_qoala.InstrToBlock">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dqcnac.parser.dag_to_qoala.</span></span><span class="sig-name descname"><span class="pre">InstrToBlock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compiled_circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QuantumCircuit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">network_to_local</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">network_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.network.network.html#dqcnac.network.network.Network" title="dqcnac.network.network.Network"><span class="pre">Network</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Layout</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dqcnac/parser/dag_to_qoala.html#InstrToBlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.parser.dag_to_qoala.InstrToBlock" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The QuantumCircuit to QoalaPrograms parser class.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.parser.dag_to_qoala.InstrToBlock.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compiled_circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QuantumCircuit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">network_to_local</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">network_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.network.network.html#dqcnac.network.network.Network" title="dqcnac.network.network.Network"><span class="pre">Network</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Layout</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dqcnac/parser/dag_to_qoala.html#InstrToBlock.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.parser.dag_to_qoala.InstrToBlock.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the parser</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>compiled_circuit</strong> – a distributed circuit</p></li>
+<li><p><strong>network_to_local</strong> – a mapping from the circuit virtual qubits to physical qubits on network nodes</p></li>
+<li><p><strong>network_config</strong> – the network configuration</p></li>
+<li><p><strong>layout</strong> – the mapping of qubits</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.parser.dag_to_qoala.InstrToBlock.bsm_subroutine">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bsm_subroutine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">routine_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qubit0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qubit1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">qoala.lang.routine.LocalRoutine</span></span></span><a class="reference internal" href="../_modules/dqcnac/parser/dag_to_qoala.html#InstrToBlock.bsm_subroutine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.parser.dag_to_qoala.InstrToBlock.bsm_subroutine" title="Link to this definition"></a></dt>
+<dd><p>Create the bell state measurement routine</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>routine_name</strong> – the routine name</p></li>
+<li><p><strong>qubit0</strong> – the first qubit</p></li>
+<li><p><strong>qubit1</strong> – the second qubit</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the qoala local routine</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.parser.dag_to_qoala.InstrToBlock.catdisent_routine_receiver">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">catdisent_routine_receiver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">routine_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qubit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">qoala.lang.routine.LocalRoutine</span></span></span><a class="reference internal" href="../_modules/dqcnac/parser/dag_to_qoala.html#InstrToBlock.catdisent_routine_receiver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.parser.dag_to_qoala.InstrToBlock.catdisent_routine_receiver" title="Link to this definition"></a></dt>
+<dd><p>Create the cat-disent routine for the receiver node, i.e. the sender node of a previous cat-ent routine</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>routine_name</strong> – the routine name</p></li>
+<li><p><strong>qubit</strong> – the qubit used</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the qoala local routine</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.parser.dag_to_qoala.InstrToBlock.catdisent_routine_sender">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">catdisent_routine_sender</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">routine_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ebit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">qoala.lang.routine.LocalRoutine</span></span></span><a class="reference internal" href="../_modules/dqcnac/parser/dag_to_qoala.html#InstrToBlock.catdisent_routine_sender"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.parser.dag_to_qoala.InstrToBlock.catdisent_routine_sender" title="Link to this definition"></a></dt>
+<dd><p>Create the cat-disent routine for the sender node, i.e. the receiver node of a previous cat-ent routine</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>routine_name</strong> – the routine name</p></li>
+<li><p><strong>ebit</strong> – the ebit used</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the qoala local routine</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.parser.dag_to_qoala.InstrToBlock.catent_routine_receiver">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">catent_routine_receiver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">routine_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ebit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">qoala.lang.routine.LocalRoutine</span></span></span><a class="reference internal" href="../_modules/dqcnac/parser/dag_to_qoala.html#InstrToBlock.catent_routine_receiver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.parser.dag_to_qoala.InstrToBlock.catent_routine_receiver" title="Link to this definition"></a></dt>
+<dd><p>Create the cat-ent routine for the receiver node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>routine_name</strong> – the routine name</p></li>
+<li><p><strong>ebit</strong> – the ebit used</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the qoala local routine</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.parser.dag_to_qoala.InstrToBlock.catent_routine_sender">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">catent_routine_sender</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">routine_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qubit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ebit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">qoala.lang.routine.LocalRoutine</span></span></span><a class="reference internal" href="../_modules/dqcnac/parser/dag_to_qoala.html#InstrToBlock.catent_routine_sender"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.parser.dag_to_qoala.InstrToBlock.catent_routine_sender" title="Link to this definition"></a></dt>
+<dd><p>Create the cat-ent routine for the sender node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>routine_name</strong> – the routine name</p></li>
+<li><p><strong>qubit</strong> – the qubit used</p></li>
+<li><p><strong>ebit</strong> – the ebit used</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the qoala local routine</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.parser.dag_to_qoala.InstrToBlock.cx_subroutine">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cx_subroutine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">routine_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">control</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">qoala.lang.routine.LocalRoutine</span></span></span><a class="reference internal" href="../_modules/dqcnac/parser/dag_to_qoala.html#InstrToBlock.cx_subroutine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.parser.dag_to_qoala.InstrToBlock.cx_subroutine" title="Link to this definition"></a></dt>
+<dd><p>Create the cx gate local routine</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>routine_name</strong> – the routine name</p></li>
+<li><p><strong>control</strong> – the control qubit</p></li>
+<li><p><strong>target</strong> – the target qubit</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the qoala local routine</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.parser.dag_to_qoala.InstrToBlock.cz_subroutine">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cz_subroutine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">routine_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qubit0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qubit1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">qoala.lang.routine.LocalRoutine</span></span></span><a class="reference internal" href="../_modules/dqcnac/parser/dag_to_qoala.html#InstrToBlock.cz_subroutine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.parser.dag_to_qoala.InstrToBlock.cz_subroutine" title="Link to this definition"></a></dt>
+<dd><p>Create the cz gate routine</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>routine_name</strong> – the routine name</p></li>
+<li><p><strong>qubit0</strong> – the first qubit</p></li>
+<li><p><strong>qubit1</strong> – the second qubit</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the qoala local routine</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.parser.dag_to_qoala.InstrToBlock.ent_swap">
+<span class="sig-name descname"><span class="pre">ent_swap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ebits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dqcnac/parser/dag_to_qoala.html#InstrToBlock.ent_swap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.parser.dag_to_qoala.InstrToBlock.ent_swap" title="Link to this definition"></a></dt>
+<dd><p>Add entanglement swapping to the list of operation in a Qoala program</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nodes</strong> – the list of nodes involved</p></li>
+<li><p><strong>ebits</strong> – the list of ebits involved</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.parser.dag_to_qoala.InstrToBlock.from_instr_to_qoala">
+<span class="sig-name descname"><span class="pre">from_instr_to_qoala</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">qoala.lang.program.QoalaProgram</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/dqcnac/parser/dag_to_qoala.html#InstrToBlock.from_instr_to_qoala"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.parser.dag_to_qoala.InstrToBlock.from_instr_to_qoala" title="Link to this definition"></a></dt>
+<dd><p>Creates QoalaPrograms, one for each node, starting from a distributed circuit</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the QoalaPrograms and a mapping of the measured qubits</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.parser.dag_to_qoala.InstrToBlock.generic_epr">
+<span class="sig-name descname"><span class="pre">generic_epr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id_sender</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_receiver</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ebit_sender</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ebit_receiver</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">qoala.lang.request.RequestRoutine</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">qoala.lang.request.RequestRoutine</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/dqcnac/parser/dag_to_qoala.html#InstrToBlock.generic_epr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.parser.dag_to_qoala.InstrToBlock.generic_epr" title="Link to this definition"></a></dt>
+<dd><p>Create the epr pair generation requests</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id_sender</strong> – the sender id</p></li>
+<li><p><strong>id_receiver</strong> – the receiver id</p></li>
+<li><p><strong>ebit_sender</strong> – the sender bit</p></li>
+<li><p><strong>ebit_receiver</strong> – the receiver ebit</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the qoala request routines</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.parser.dag_to_qoala.InstrToBlock.h_subroutine">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">h_subroutine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">routine_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qubit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">qoala.lang.routine.LocalRoutine</span></span></span><a class="reference internal" href="../_modules/dqcnac/parser/dag_to_qoala.html#InstrToBlock.h_subroutine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.parser.dag_to_qoala.InstrToBlock.h_subroutine" title="Link to this definition"></a></dt>
+<dd><p>Create the h gate routine
+:param routine_name: the routine name
+:param qubit: the qubit used</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the qoala local routine</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.parser.dag_to_qoala.InstrToBlock.measure_subroutine">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">measure_subroutine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">routine_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qubit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">qoala.lang.routine.LocalRoutine</span></span></span><a class="reference internal" href="../_modules/dqcnac/parser/dag_to_qoala.html#InstrToBlock.measure_subroutine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.parser.dag_to_qoala.InstrToBlock.measure_subroutine" title="Link to this definition"></a></dt>
+<dd><p>Create the measurement routine</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>routine_name</strong> – the routine name</p></li>
+<li><p><strong>qubit</strong> – the qubit measured</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the qoala local routine</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.parser.dag_to_qoala.InstrToBlock.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">qoala.lang.program.QoalaProgram</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/dqcnac/parser/dag_to_qoala.html#InstrToBlock.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.parser.dag_to_qoala.InstrToBlock.run" title="Link to this definition"></a></dt>
+<dd><p>Run the paser to parse a distributed DAGCircuit into QoalaPrograms</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the QoalaPrograms and a mapping of the measured qubits</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.parser.dag_to_qoala.InstrToBlock.rx_subroutine">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rx_subroutine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">routine_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qubit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">qoala.lang.routine.LocalRoutine</span></span></span><a class="reference internal" href="../_modules/dqcnac/parser/dag_to_qoala.html#InstrToBlock.rx_subroutine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.parser.dag_to_qoala.InstrToBlock.rx_subroutine" title="Link to this definition"></a></dt>
+<dd><p>Create the rx gate routine</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>routine_name</strong> – the routine name</p></li>
+<li><p><strong>qubit</strong> – the qubit used</p></li>
+<li><p><strong>n</strong> – the exponent of pi</p></li>
+<li><p><strong>d</strong> – the denominator of the pi fraction</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the qoala local routine</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.parser.dag_to_qoala.InstrToBlock.ry_subroutine">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ry_subroutine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">routine_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qubit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">qoala.lang.routine.LocalRoutine</span></span></span><a class="reference internal" href="../_modules/dqcnac/parser/dag_to_qoala.html#InstrToBlock.ry_subroutine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.parser.dag_to_qoala.InstrToBlock.ry_subroutine" title="Link to this definition"></a></dt>
+<dd><p>Create the ry gate routine</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>routine_name</strong> – the routine name</p></li>
+<li><p><strong>qubit</strong> – the qubit used</p></li>
+<li><p><strong>n</strong> – the exponent of pi</p></li>
+<li><p><strong>d</strong> – the denominator of the pi fraction</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the qoala local routine</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.parser.dag_to_qoala.InstrToBlock.rz_subroutine">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rz_subroutine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">routine_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qubit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">qoala.lang.routine.LocalRoutine</span></span></span><a class="reference internal" href="../_modules/dqcnac/parser/dag_to_qoala.html#InstrToBlock.rz_subroutine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.parser.dag_to_qoala.InstrToBlock.rz_subroutine" title="Link to this definition"></a></dt>
+<dd><p>Create the rz gate routine</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>routine_name</strong> – the routine name</p></li>
+<li><p><strong>qubit</strong> – the qubit used</p></li>
+<li><p><strong>n</strong> – the exponent of pi</p></li>
+<li><p><strong>d</strong> – the denominator of the pi fraction</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the qoala local routine</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.parser.dag_to_qoala.InstrToBlock.swap_subroutine">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">swap_subroutine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">routine_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qubit0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qubit1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">qoala.lang.routine.LocalRoutine</span></span></span><a class="reference internal" href="../_modules/dqcnac/parser/dag_to_qoala.html#InstrToBlock.swap_subroutine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.parser.dag_to_qoala.InstrToBlock.swap_subroutine" title="Link to this definition"></a></dt>
+<dd><p>Create the swap routine</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>routine_name</strong> – the routine name</p></li>
+<li><p><strong>qubit0</strong> – the first qubit</p></li>
+<li><p><strong>qubit1</strong> – the second qubit</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the qoala local routine</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.parser.dag_to_qoala.InstrToBlock.teledata_routine_receiver">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">teledata_routine_receiver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">routine_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ebit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qubit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">qoala.lang.routine.LocalRoutine</span></span></span><a class="reference internal" href="../_modules/dqcnac/parser/dag_to_qoala.html#InstrToBlock.teledata_routine_receiver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.parser.dag_to_qoala.InstrToBlock.teledata_routine_receiver" title="Link to this definition"></a></dt>
+<dd><p>Create the teledata routine for the receiver node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>routine_name</strong> – the routine name</p></li>
+<li><p><strong>ebit</strong> – the ebit sued</p></li>
+<li><p><strong>qubit</strong> – the qubit used</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the qoala local routine</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.parser.dag_to_qoala.InstrToBlock.teledata_routine_sender">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">teledata_routine_sender</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">routine_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qubit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ebit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">qoala.lang.routine.LocalRoutine</span></span></span><a class="reference internal" href="../_modules/dqcnac/parser/dag_to_qoala.html#InstrToBlock.teledata_routine_sender"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.parser.dag_to_qoala.InstrToBlock.teledata_routine_sender" title="Link to this definition"></a></dt>
+<dd><p>Create the teledata routine for the sender node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>routine_name</strong> – the routine name</p></li>
+<li><p><strong>qubit</strong> – the qubit used</p></li>
+<li><p><strong>ebit</strong> – the ebit used</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the qoala local routine</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.parser.dag_to_qoala.InstrToBlock.x_subroutine">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">x_subroutine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">routine_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qubit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">qoala.lang.routine.LocalRoutine</span></span></span><a class="reference internal" href="../_modules/dqcnac/parser/dag_to_qoala.html#InstrToBlock.x_subroutine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.parser.dag_to_qoala.InstrToBlock.x_subroutine" title="Link to this definition"></a></dt>
+<dd><p>Create the x gate routine</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>routine_name</strong> – the routine name</p></li>
+<li><p><strong>qubit</strong> – the qubit used</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the qoala local routine</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.parser.dag_to_qoala.InstrToBlock.y_subroutine">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">y_subroutine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">routine_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qubit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">qoala.lang.routine.LocalRoutine</span></span></span><a class="reference internal" href="../_modules/dqcnac/parser/dag_to_qoala.html#InstrToBlock.y_subroutine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.parser.dag_to_qoala.InstrToBlock.y_subroutine" title="Link to this definition"></a></dt>
+<dd><p>Create the y gate routine</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>routine_name</strong> – the routine name</p></li>
+<li><p><strong>qubit</strong> – the qubit used</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the qoala local routine</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.parser.dag_to_qoala.InstrToBlock.z_subroutine">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">z_subroutine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">routine_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qubit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">qoala.lang.routine.LocalRoutine</span></span></span><a class="reference internal" href="../_modules/dqcnac/parser/dag_to_qoala.html#InstrToBlock.z_subroutine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.parser.dag_to_qoala.InstrToBlock.z_subroutine" title="Link to this definition"></a></dt>
+<dd><p>Create the z gate routine</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>routine_name</strong> – the routine name</p></li>
+<li><p><strong>qubit</strong> – the qubit used</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the qoala local routine</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="dqcnac.parser.html" class="btn btn-neutral float-left" title="dqcnac.parser package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="dqcnac.stats.html" class="btn btn-neutral float-right" title="dqcnac.stats package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, QSLab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

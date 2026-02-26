@@ -1,0 +1,211 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dqcnac.nonlocal_gate_scheduling package &mdash; DQC-NAC 0.1.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=92734c54"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="dqcnac.nonlocal_gate_scheduling.compilation_state module" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html" />
+    <link rel="prev" title="dqcnac.network_configuration.network_builder module" href="dqcnac.network_configuration.network_builder.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            DQC-NAC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../readme.html">DQC-NAC: a compiler for Distributed Quantum Computing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#installation">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#usage">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#api-docs">API Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#acknowledgements">Acknowledgements</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">dqcnac API</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#main-package">Main package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="modules.html">dqcnac</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="dqcnac.html">dqcnac package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">DQC-NAC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">dqcnac API</a></li>
+          <li class="breadcrumb-item"><a href="modules.html">dqcnac</a></li>
+          <li class="breadcrumb-item"><a href="dqcnac.html">dqcnac package</a></li>
+      <li class="breadcrumb-item active">dqcnac.nonlocal_gate_scheduling package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/dqcnac.nonlocal_gate_scheduling.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-dqcnac.nonlocal_gate_scheduling">
+<span id="dqcnac-nonlocal-gate-scheduling-package"></span><h1>dqcnac.nonlocal_gate_scheduling package<a class="headerlink" href="#module-dqcnac.nonlocal_gate_scheduling" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html">dqcnac.nonlocal_gate_scheduling.compilation_state module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.Cover"><code class="docutils literal notranslate"><span class="pre">Cover</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.Cover.__init__"><code class="docutils literal notranslate"><span class="pre">Cover.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.Cover.add"><code class="docutils literal notranslate"><span class="pre">Cover.add()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.Cover.set_path"><code class="docutils literal notranslate"><span class="pre">Cover.set_path()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State"><code class="docutils literal notranslate"><span class="pre">State</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State.__init__"><code class="docutils literal notranslate"><span class="pre">State.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State.get_deep_copy"><code class="docutils literal notranslate"><span class="pre">State.get_deep_copy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State.get_simple_copy"><code class="docutils literal notranslate"><span class="pre">State.get_simple_copy()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.converters.html">dqcnac.nonlocal_gate_scheduling.converters module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.converters.html#dqcnac.nonlocal_gate_scheduling.converters.state_to_dag"><code class="docutils literal notranslate"><span class="pre">state_to_dag()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.html">dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.html#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule"><code class="docutils literal notranslate"><span class="pre">NonlocalGateSchedule</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.html#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.__init__"><code class="docutils literal notranslate"><span class="pre">NonlocalGateSchedule.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.html#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.add_gate"><code class="docutils literal notranslate"><span class="pre">NonlocalGateSchedule.add_gate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.html#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.circuit_cost"><code class="docutils literal notranslate"><span class="pre">NonlocalGateSchedule.circuit_cost()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.html#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.comp_cover_succ"><code class="docutils literal notranslate"><span class="pre">NonlocalGateSchedule.comp_cover_succ()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.html#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.comp_dis_ent"><code class="docutils literal notranslate"><span class="pre">NonlocalGateSchedule.comp_dis_ent()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.html#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.comp_ent"><code class="docutils literal notranslate"><span class="pre">NonlocalGateSchedule.comp_ent()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.html#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.comp_for"><code class="docutils literal notranslate"><span class="pre">NonlocalGateSchedule.comp_for()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.html#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.comp_post_process"><code class="docutils literal notranslate"><span class="pre">NonlocalGateSchedule.comp_post_process()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.html#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.comp_preprocess"><code class="docutils literal notranslate"><span class="pre">NonlocalGateSchedule.comp_preprocess()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.html#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.comp_while"><code class="docutils literal notranslate"><span class="pre">NonlocalGateSchedule.comp_while()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.html#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.compile"><code class="docutils literal notranslate"><span class="pre">NonlocalGateSchedule.compile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.html#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.compile_multi_gate"><code class="docutils literal notranslate"><span class="pre">NonlocalGateSchedule.compile_multi_gate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.html#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.cost"><code class="docutils literal notranslate"><span class="pre">NonlocalGateSchedule.cost()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.html#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.find_migrations"><code class="docutils literal notranslate"><span class="pre">NonlocalGateSchedule.find_migrations()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.html#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.find_teleports"><code class="docutils literal notranslate"><span class="pre">NonlocalGateSchedule.find_teleports()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.html#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.get_min_ebit"><code class="docutils literal notranslate"><span class="pre">NonlocalGateSchedule.get_min_ebit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.html#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.get_teleport"><code class="docutils literal notranslate"><span class="pre">NonlocalGateSchedule.get_teleport()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.html#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.is_covered"><code class="docutils literal notranslate"><span class="pre">NonlocalGateSchedule.is_covered()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.html#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.local_op"><code class="docutils literal notranslate"><span class="pre">NonlocalGateSchedule.local_op()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.html#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.run"><code class="docutils literal notranslate"><span class="pre">NonlocalGateSchedule.run()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.html#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.tel_compile"><code class="docutils literal notranslate"><span class="pre">NonlocalGateSchedule.tel_compile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.html#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.tel_cov_succ"><code class="docutils literal notranslate"><span class="pre">NonlocalGateSchedule.tel_cov_succ()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.html#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.tel_for"><code class="docutils literal notranslate"><span class="pre">NonlocalGateSchedule.tel_for()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.html#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.tel_post_proces"><code class="docutils literal notranslate"><span class="pre">NonlocalGateSchedule.tel_post_proces()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.html#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.tel_tel"><code class="docutils literal notranslate"><span class="pre">NonlocalGateSchedule.tel_tel()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_operations.html">dqcnac.nonlocal_gate_scheduling.nonlocal_operations module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_operations.html#dqcnac.nonlocal_gate_scheduling.nonlocal_operations.CatDisEnt"><code class="docutils literal notranslate"><span class="pre">CatDisEnt</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_operations.html#dqcnac.nonlocal_gate_scheduling.nonlocal_operations.CatDisEnt.cargs"><code class="docutils literal notranslate"><span class="pre">CatDisEnt.cargs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_operations.html#dqcnac.nonlocal_gate_scheduling.nonlocal_operations.CatDisEnt.op"><code class="docutils literal notranslate"><span class="pre">CatDisEnt.op</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_operations.html#dqcnac.nonlocal_gate_scheduling.nonlocal_operations.CatDisEnt.qargs"><code class="docutils literal notranslate"><span class="pre">CatDisEnt.qargs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_operations.html#dqcnac.nonlocal_gate_scheduling.nonlocal_operations.CatDisEnt.sort_key"><code class="docutils literal notranslate"><span class="pre">CatDisEnt.sort_key</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_operations.html#dqcnac.nonlocal_gate_scheduling.nonlocal_operations.CatDisEntInst"><code class="docutils literal notranslate"><span class="pre">CatDisEntInst</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_operations.html#dqcnac.nonlocal_gate_scheduling.nonlocal_operations.CatEnt"><code class="docutils literal notranslate"><span class="pre">CatEnt</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_operations.html#dqcnac.nonlocal_gate_scheduling.nonlocal_operations.CatEnt.cargs"><code class="docutils literal notranslate"><span class="pre">CatEnt.cargs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_operations.html#dqcnac.nonlocal_gate_scheduling.nonlocal_operations.CatEnt.op"><code class="docutils literal notranslate"><span class="pre">CatEnt.op</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_operations.html#dqcnac.nonlocal_gate_scheduling.nonlocal_operations.CatEnt.qargs"><code class="docutils literal notranslate"><span class="pre">CatEnt.qargs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_operations.html#dqcnac.nonlocal_gate_scheduling.nonlocal_operations.CatEnt.sort_key"><code class="docutils literal notranslate"><span class="pre">CatEnt.sort_key</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_operations.html#dqcnac.nonlocal_gate_scheduling.nonlocal_operations.CatEntInst"><code class="docutils literal notranslate"><span class="pre">CatEntInst</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_operations.html#dqcnac.nonlocal_gate_scheduling.nonlocal_operations.Teleport"><code class="docutils literal notranslate"><span class="pre">Teleport</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_operations.html#dqcnac.nonlocal_gate_scheduling.nonlocal_operations.Teleport.cargs"><code class="docutils literal notranslate"><span class="pre">Teleport.cargs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_operations.html#dqcnac.nonlocal_gate_scheduling.nonlocal_operations.Teleport.op"><code class="docutils literal notranslate"><span class="pre">Teleport.op</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_operations.html#dqcnac.nonlocal_gate_scheduling.nonlocal_operations.Teleport.qargs"><code class="docutils literal notranslate"><span class="pre">Teleport.qargs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_operations.html#dqcnac.nonlocal_gate_scheduling.nonlocal_operations.Teleport.sort_key"><code class="docutils literal notranslate"><span class="pre">Teleport.sort_key</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.nonlocal_operations.html#dqcnac.nonlocal_gate_scheduling.nonlocal_operations.TeleportInst"><code class="docutils literal notranslate"><span class="pre">TeleportInst</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="dqcnac.network_configuration.network_builder.html" class="btn btn-neutral float-left" title="dqcnac.network_configuration.network_builder module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="dqcnac.nonlocal_gate_scheduling.compilation_state.html" class="btn btn-neutral float-right" title="dqcnac.nonlocal_gate_scheduling.compilation_state module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, QSLab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

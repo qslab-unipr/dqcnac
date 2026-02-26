@@ -1,0 +1,595 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule module &mdash; DQC-NAC 0.1.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=92734c54"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="dqcnac.nonlocal_gate_scheduling.nonlocal_operations module" href="dqcnac.nonlocal_gate_scheduling.nonlocal_operations.html" />
+    <link rel="prev" title="dqcnac.nonlocal_gate_scheduling.converters module" href="dqcnac.nonlocal_gate_scheduling.converters.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            DQC-NAC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../readme.html">DQC-NAC: a compiler for Distributed Quantum Computing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#installation">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#usage">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#api-docs">API Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#acknowledgements">Acknowledgements</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">dqcnac API</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#main-package">Main package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="modules.html">dqcnac</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="dqcnac.html">dqcnac package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">DQC-NAC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">dqcnac API</a></li>
+          <li class="breadcrumb-item"><a href="modules.html">dqcnac</a></li>
+          <li class="breadcrumb-item"><a href="dqcnac.html">dqcnac package</a></li>
+          <li class="breadcrumb-item"><a href="dqcnac.nonlocal_gate_scheduling.html">dqcnac.nonlocal_gate_scheduling package</a></li>
+      <li class="breadcrumb-item active">dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule">
+<span id="dqcnac-nonlocal-gate-scheduling-nonlocal-gate-schedule-module"></span><h1>dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule module<a class="headerlink" href="#module-dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule" title="Link to this heading"></a></h1>
+<p>The Nonlocal gates scheduler module.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.</span></span><span class="sig-name descname"><span class="pre">NonlocalGateSchedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.network.network.html#dqcnac.network.network.Network" title="dqcnac.network.network.Network"><span class="pre">Network</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes_mapping</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_teleport</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dqcnac/nonlocal_gate_scheduling/nonlocal_gate_schedule.html#NonlocalGateSchedule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A nonlocal gates’ scheduler class.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.network.network.html#dqcnac.network.network.Network" title="dqcnac.network.network.Network"><span class="pre">Network</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes_mapping</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_teleport</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dqcnac/nonlocal_gate_scheduling/nonlocal_gate_schedule.html#NonlocalGateSchedule.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the remote gates’ scheduler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>network</strong> – the network to use for remote operations.</p></li>
+<li><p><strong>nodes_mapping</strong></p></li>
+<li><p><strong>use_teleport</strong> – whether to use teledata operations or not.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.add_gate">
+<span class="sig-name descname"><span class="pre">add_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">executed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DAGOpNode</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">times</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dqcnac/nonlocal_gate_scheduling/nonlocal_gate_schedule.html#NonlocalGateSchedule.add_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.add_gate" title="Link to this definition"></a></dt>
+<dd><p>Add a scheduled gate to the compilation state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gate</strong> – the gate to add</p></li>
+<li><p><strong>qargs</strong> – the qubits on which the gate acts</p></li>
+<li><p><strong>executed</strong> – the current list of executed gates</p></li>
+<li><p><strong>times</strong> – the times of last usage for each qubit</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.circuit_cost">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">circuit_cost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">executed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DAGOpNode</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/dqcnac/nonlocal_gate_scheduling/nonlocal_gate_schedule.html#NonlocalGateSchedule.circuit_cost"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.circuit_cost" title="Link to this definition"></a></dt>
+<dd><p>Compute the cost of the circuit regarding consumed ebits.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>executed</strong> – the list of executed gates</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the  estimated cost of the circuit</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.comp_cover_succ">
+<span class="sig-name descname"><span class="pre">comp_cover_succ</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">to_cover</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DAGOpNode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">best_cost</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.Cover" title="dqcnac.nonlocal_gate_scheduling.compilation_state.Cover"><span class="pre">Cover</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_remove</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">DAGOpNode</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_ops_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_qargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_e1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_e2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dqcnac/nonlocal_gate_scheduling/nonlocal_gate_schedule.html#NonlocalGateSchedule.comp_cover_succ"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.comp_cover_succ" title="Link to this definition"></a></dt>
+<dd><p>Check if cat-ent can cover more than one gate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>to_cover</strong> – the gate to cover</p></li>
+<li><p><strong>best_cost</strong> – the cost of the cat-ent</p></li>
+<li><p><strong>state</strong> – the current compilation state</p></li>
+<li><p><strong>to_remove</strong> – a set of gates to remove form the gates’ list, already covered by previous compilation steps</p></li>
+<li><p><strong>remote_ops_count</strong> – the number of remote operations scheduled</p></li>
+<li><p><strong>new_qargs</strong> – the qubits on which the covered gate will act</p></li>
+<li><p><strong>e1</strong> – the ebits used for the cat-ent, node1 to node2</p></li>
+<li><p><strong>_e1</strong> – the ebits used for the cat-ent, node1 to middle, only for migration on a middle node</p></li>
+<li><p><strong>e2</strong> – the ebits used for the cat-ent, node2 to node1</p></li>
+<li><p><strong>_e2</strong> – the ebits used for the cat-ent, node2 to middle, only for migration on a middle node</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.comp_dis_ent">
+<span class="sig-name descname"><span class="pre">comp_dis_ent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">best_cost</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.Cover" title="dqcnac.nonlocal_gate_scheduling.compilation_state.Cover"><span class="pre">Cover</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_cover</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DAGOpNode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_e2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dqcnac/nonlocal_gate_scheduling/nonlocal_gate_schedule.html#NonlocalGateSchedule.comp_dis_ent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.comp_dis_ent" title="Link to this definition"></a></dt>
+<dd><p>Add cat-disent after gate (to_cover).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>best_cost</strong> – the cist of the cat-disent</p></li>
+<li><p><strong>state</strong> – the current compilation state</p></li>
+<li><p><strong>to_cover</strong> – the gate covered</p></li>
+<li><p><strong>e2</strong> – the ebits used for the cat-disent, node2 to node1</p></li>
+<li><p><strong>_e2</strong> – the ebits used for the cat-disent, only for migration on a middle node</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.comp_ent">
+<span class="sig-name descname"><span class="pre">comp_ent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_cover</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DAGOpNode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_remove</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">DAGOpNode</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">best_cost</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.Cover" title="dqcnac.nonlocal_gate_scheduling.compilation_state.Cover"><span class="pre">Cover</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/dqcnac/nonlocal_gate_scheduling/nonlocal_gate_schedule.html#NonlocalGateSchedule.comp_ent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.comp_ent" title="Link to this definition"></a></dt>
+<dd><p>Add cat-ent to cover gate (to_cover)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – the current compiled state</p></li>
+<li><p><strong>to_cover</strong> – the gate to cover</p></li>
+<li><p><strong>to_remove</strong> – a list of gates to remove from the gates’ list, already covered by previous compilation steps</p></li>
+<li><p><strong>best_cost</strong> – the cost of the cat-ent</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the qubits which the covered gate acts, the ebits used to perform the cat-ent</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.comp_for">
+<span class="sig-name descname"><span class="pre">comp_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">DAGOpNode</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">uncovered</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">DAGOpNode</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_remove</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">DAGOpNode</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_ops_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dag_circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DAGCircuit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_cover</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DAGOpNode</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">best_cost</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dqcnac/nonlocal_gate_scheduling/nonlocal_gate_schedule.html#NonlocalGateSchedule.comp_for"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.comp_for" title="Link to this definition"></a></dt>
+<dd><p>Search for remote gate to cover</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gates</strong> – the list of gates in the circuit</p></li>
+<li><p><strong>state</strong> – the current compiled state</p></li>
+<li><p><strong>uncovered</strong> – the list of uncovered gates</p></li>
+<li><p><strong>to_remove</strong> – a list of gates to remove form the gates’ list, already covered by previous compilation steps</p></li>
+<li><p><strong>remote_ops_count</strong> – the number of remote operations already scheduled</p></li>
+<li><p><strong>dag_circuit</strong> – the circuit to compile</p></li>
+<li><p><strong>to_cover</strong> – the next gate to cover</p></li>
+<li><p><strong>best_cost</strong> – the cost of the coverage</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the best coverage, either teleport or telegate, and the cost of the coverage</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.comp_post_process">
+<span class="sig-name descname"><span class="pre">comp_post_process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">gates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">DAGOpNode</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_remove</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">DAGOpNode</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uncovered</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">DAGOpNode</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dqcnac/nonlocal_gate_scheduling/nonlocal_gate_schedule.html#NonlocalGateSchedule.comp_post_process"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.comp_post_process" title="Link to this definition"></a></dt>
+<dd><p>Update list of uncovered gates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – the current compilation state</p></li>
+<li><p><strong>gates</strong> – the list of gates in the circuit</p></li>
+<li><p><strong>to_remove</strong> – a list of gates to remove form the gates’ list, already covered by previous compilation steps</p></li>
+<li><p><strong>uncovered</strong> – the list of uncovered gates</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.comp_preprocess">
+<span class="sig-name descname"><span class="pre">comp_preprocess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dag_circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DAGCircuit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">previous</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">DAGOpNode</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">DAGOpNode</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/dqcnac/nonlocal_gate_scheduling/nonlocal_gate_schedule.html#NonlocalGateSchedule.comp_preprocess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.comp_preprocess" title="Link to this definition"></a></dt>
+<dd><p>Preprocess before compilation with cat-ent. Update list of uncovered and covered gates</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dag_circuit</strong> – the dag circuit to compile</p></li>
+<li><p><strong>state</strong> – the current compilation state</p></li>
+<li><p><strong>previous</strong> – a list of previously compiled states, possibly derived from previous evaluations during coverage of other gates</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the list of gates, the update lists of uncovered and covered gates</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.comp_while">
+<span class="sig-name descname"><span class="pre">comp_while</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uncovered</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">DAGOpNode</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">DAGOpNode</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dag_circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DAGCircuit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_cost</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">previous</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compiled</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">mig_found</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_tel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a></span></span><a class="reference internal" href="../_modules/dqcnac/nonlocal_gate_scheduling/nonlocal_gate_schedule.html#NonlocalGateSchedule.comp_while"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.comp_while" title="Link to this definition"></a></dt>
+<dd><p>Compile portion of circuit with telegates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uncovered</strong> – the list of uncovered gates</p></li>
+<li><p><strong>stop</strong> – the number of gates we will try to cover</p></li>
+<li><p><strong>gates</strong> – the list of gates in the circuit</p></li>
+<li><p><strong>state</strong> – the current compilation state</p></li>
+<li><p><strong>dag_circuit</strong> – the circuit to compile</p></li>
+<li><p><strong>max_cost</strong> – the maximum cost allowed for covering a gate</p></li>
+<li><p><strong>previous</strong> – a list of previously compiled states, possibly derived from previous evaluations during coverage of other gates</p></li>
+<li><p><strong>compiled</strong> – the compilation state to update</p></li>
+<li><p><strong>mig_found</strong> – signal if the coverage of at least one gate was possible</p></li>
+<li><p><strong>post_tel</strong> – signal if we are trying to compile after a teleport operation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the updated compilation state</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.compile">
+<span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dag_circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DAGCircuit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_early</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">previous</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/dqcnac/nonlocal_gate_scheduling/nonlocal_gate_schedule.html#NonlocalGateSchedule.compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.compile" title="Link to this definition"></a></dt>
+<dd><p>Compile circuit with telegates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dag_circuit</strong> – the circuit to compile</p></li>
+<li><p><strong>state</strong> – the current compilation state</p></li>
+<li><p><strong>stop_early</strong> – signal if we want to put a limit on the gates covered by a single cat-ent</p></li>
+<li><p><strong>previous</strong> – a list of previously compiled states, possibly derived from previous evaluations during coverage of other gates</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the updated compilation state</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.compile_multi_gate">
+<span class="sig-name descname"><span class="pre">compile_multi_gate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multi_gate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DAGOpNode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">old_qregs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Qubit</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dqcnac/nonlocal_gate_scheduling/nonlocal_gate_schedule.html#NonlocalGateSchedule.compile_multi_gate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.compile_multi_gate" title="Link to this definition"></a></dt>
+<dd><p>Compile everything in a multi-gate
+Multi-gate could have many non-local gates, but they shouldn’t break each other</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>multi_gate</strong> – the multi-gate to compile</p></li>
+<li><p><strong>state</strong> – the current state</p></li>
+<li><p><strong>old_qregs</strong> – the old qregs mapping</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.cost">
+<span class="sig-name descname"><span class="pre">cost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dag_circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DAGCircuit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DAGOpNode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uncovered</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">DAGOpNode</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.Cover" title="dqcnac.nonlocal_gate_scheduling.compilation_state.Cover"><span class="pre">Cover</span></a></span></span><a class="reference internal" href="../_modules/dqcnac/nonlocal_gate_scheduling/nonlocal_gate_schedule.html#NonlocalGateSchedule.cost"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.cost" title="Link to this definition"></a></dt>
+<dd><p>Select best migration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dag_circuit</strong> – the circuit to compile</p></li>
+<li><p><strong>gate</strong> – the gate covered</p></li>
+<li><p><strong>time</strong> – the time at which we would like to execute the gate</p></li>
+<li><p><strong>uncovered</strong> – a list of uncovered gates</p></li>
+<li><p><strong>state</strong> – the current compilation state</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the best coverage found</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.find_migrations">
+<span class="sig-name descname"><span class="pre">find_migrations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DAGOpNode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes_mapping</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mappings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Qubit</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.Cover" title="dqcnac.nonlocal_gate_scheduling.compilation_state.Cover"><span class="pre">Cover</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/dqcnac/nonlocal_gate_scheduling/nonlocal_gate_schedule.html#NonlocalGateSchedule.find_migrations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.find_migrations" title="Link to this definition"></a></dt>
+<dd><p>Find possible migrations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gate</strong> – the gate to cover</p></li>
+<li><p><strong>nodes_mapping</strong> – the current nodes mapping</p></li>
+<li><p><strong>mappings</strong> – the current mapping</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list of possible covers</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.find_teleports">
+<span class="sig-name descname"><span class="pre">find_teleports</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DAGOpNode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.Cover" title="dqcnac.nonlocal_gate_scheduling.compilation_state.Cover"><span class="pre">Cover</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/dqcnac/nonlocal_gate_scheduling/nonlocal_gate_schedule.html#NonlocalGateSchedule.find_teleports"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.find_teleports" title="Link to this definition"></a></dt>
+<dd><p>Find possible teledata operations to cover a gate</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gate</strong> – the gate to cover</p></li>
+<li><p><strong>state</strong> – the current compilation state</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list of possible teledata operations</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.get_min_ebit">
+<span class="sig-name descname"><span class="pre">get_min_ebit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">node1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Qubit</span></span></span><a class="reference internal" href="../_modules/dqcnac/nonlocal_gate_scheduling/nonlocal_gate_schedule.html#NonlocalGateSchedule.get_min_ebit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.get_min_ebit" title="Link to this definition"></a></dt>
+<dd><p>Find the least used ebit from node1 to node 2.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – the current compilation state</p></li>
+<li><p><strong>node1</strong> – the first node</p></li>
+<li><p><strong>node2</strong> – the second node</p></li>
+<li><p><strong>exclude</strong> – ebits to exclude from the search</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the ebit</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.get_teleport">
+<span class="sig-name descname"><span class="pre">get_teleport</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DAGOpNode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/dqcnac/nonlocal_gate_scheduling/nonlocal_gate_schedule.html#NonlocalGateSchedule.get_teleport"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.get_teleport" title="Link to this definition"></a></dt>
+<dd><p>Compile with teleports</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gate</strong> – the gate to cover</p></li>
+<li><p><strong>state</strong> – the current compiled state</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the cost of the teleport, the consequent compilation state, and an empty list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.is_covered">
+<span class="sig-name descname"><span class="pre">is_covered</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DAGOpNode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">migration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.Cover" title="dqcnac.nonlocal_gate_scheduling.compilation_state.Cover"><span class="pre">Cover</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">time1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">times</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">covered</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">DAGOpNode</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mapping</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Qubit</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/dqcnac/nonlocal_gate_scheduling/nonlocal_gate_schedule.html#NonlocalGateSchedule.is_covered"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.is_covered" title="Link to this definition"></a></dt>
+<dd><p>Check if migration covers the gate, check also for coverage based on timing</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gate</strong> – the gate to check coverage for</p></li>
+<li><p><strong>migration</strong> – the migration to check coverage for</p></li>
+<li><p><strong>time1</strong> – the time of the first migration</p></li>
+<li><p><strong>times</strong> – the times of last usage for each qubit</p></li>
+<li><p><strong>covered</strong> – the set of covered gates</p></li>
+<li><p><strong>mapping</strong> – the mapping of qubits to qubits</p></li>
+<li><p><strong>time2</strong> – the time of the second migration</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if migration covers the gate, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.local_op">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">local_op</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes_mapping</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/dqcnac/nonlocal_gate_scheduling/nonlocal_gate_schedule.html#NonlocalGateSchedule.local_op"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.local_op" title="Link to this definition"></a></dt>
+<dd><p>Check if an operation is local or not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>qargs</strong> – the qubits on which the operation acts</p></li>
+<li><p><strong>nodes_mapping</strong> – the current mapping of qubits to nodes in a network</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the operation is local, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dag_circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DAGCircuit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gate_grouping</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count_non_local_gates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Qubit</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/dqcnac/nonlocal_gate_scheduling/nonlocal_gate_schedule.html#NonlocalGateSchedule.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.run" title="Link to this definition"></a></dt>
+<dd><p>Run the remote operation scheduler over a circuit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dag_circuit</strong> – the circuit to schedule</p></li>
+<li><p><strong>gate_grouping</strong> – whether to group gates</p></li>
+<li><p><strong>count_non_local_gates</strong> – whether to count non-local gates</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns:
+The state of compilation after scheduling and the final mapping of the qubits</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.tel_compile">
+<span class="sig-name descname"><span class="pre">tel_compile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dag_circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DAGCircuit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_early</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/dqcnac/nonlocal_gate_scheduling/nonlocal_gate_schedule.html#NonlocalGateSchedule.tel_compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.tel_compile" title="Link to this definition"></a></dt>
+<dd><p>Compile circuit with telegates, after a teleport operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dag_circuit</strong> – the circuit to compile</p></li>
+<li><p><strong>state</strong> – the current compilation state</p></li>
+<li><p><strong>stop_early</strong> – signal if we want to put a limit on the gates covered by a single cat-ent</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the updated compilation state</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.tel_cov_succ">
+<span class="sig-name descname"><span class="pre">tel_cov_succ</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">teleport</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.Cover" title="dqcnac.nonlocal_gate_scheduling.compilation_state.Cover"><span class="pre">Cover</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">gate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DAGOpNode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dqcnac/nonlocal_gate_scheduling/nonlocal_gate_schedule.html#NonlocalGateSchedule.tel_cov_succ"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.tel_cov_succ" title="Link to this definition"></a></dt>
+<dd><p>Check if teleport can cover more than one gate</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – the current compilation state</p></li>
+<li><p><strong>teleport</strong> – the teleport operation</p></li>
+<li><p><strong>gate</strong> – the gate covered by the teleport</p></li>
+<li><p><strong>e1</strong> – the list of ebits used for the teleport</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.tel_for">
+<span class="sig-name descname"><span class="pre">tel_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">teleports</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.Cover" title="dqcnac.nonlocal_gate_scheduling.compilation_state.Cover"><span class="pre">Cover</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">gate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DAGOpNode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/dqcnac/nonlocal_gate_scheduling/nonlocal_gate_schedule.html#NonlocalGateSchedule.tel_for"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.tel_for" title="Link to this definition"></a></dt>
+<dd><p>Search for best teleport</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>teleports</strong> – the possible teleport operations</p></li>
+<li><p><strong>state</strong> – the current compilation state</p></li>
+<li><p><strong>gate</strong> – the gate to cover</p></li>
+<li><p><strong>cost</strong> – the cost</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the cost of the best teleport and the consequent compilation state</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.tel_post_proces">
+<span class="sig-name descname"><span class="pre">tel_post_proces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_nodes_mapping</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_mapping</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Qubit</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_timed_tele_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_executed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DAGOpNode</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_times</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/dqcnac/nonlocal_gate_scheduling/nonlocal_gate_schedule.html#NonlocalGateSchedule.tel_post_proces"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.tel_post_proces" title="Link to this definition"></a></dt>
+<dd><p>Update compilation state after teleport</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_state</strong> – the current compilation state</p></li>
+<li><p><strong>temp_nodes_mapping</strong> – the new nodes mapping</p></li>
+<li><p><strong>temp_mapping</strong> – the new mapping</p></li>
+<li><p><strong>temp_timed_tele_list</strong> – the new rimed_tele_list</p></li>
+<li><p><strong>temp_executed</strong> – the new executed list</p></li>
+<li><p><strong>temp_times</strong> – the new times</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the new state and a copy of it for further processing</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.tel_tel">
+<span class="sig-name descname"><span class="pre">tel_tel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.State" title="dqcnac.nonlocal_gate_scheduling.compilation_state.State"><span class="pre">State</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">teleport</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dqcnac.nonlocal_gate_scheduling.compilation_state.html#dqcnac.nonlocal_gate_scheduling.compilation_state.Cover" title="dqcnac.nonlocal_gate_scheduling.compilation_state.Cover"><span class="pre">Cover</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">gate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DAGOpNode</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Qubit</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/dqcnac/nonlocal_gate_scheduling/nonlocal_gate_schedule.html#NonlocalGateSchedule.tel_tel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dqcnac.nonlocal_gate_scheduling.nonlocal_gate_schedule.NonlocalGateSchedule.tel_tel" title="Link to this definition"></a></dt>
+<dd><p>Add teleport to executed gates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – the current compilation state</p></li>
+<li><p><strong>teleport</strong> – the teleport to add</p></li>
+<li><p><strong>gate</strong> – the gate covered by the teleport operation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the list of ebits used for the teleport</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="dqcnac.nonlocal_gate_scheduling.converters.html" class="btn btn-neutral float-left" title="dqcnac.nonlocal_gate_scheduling.converters module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="dqcnac.nonlocal_gate_scheduling.nonlocal_operations.html" class="btn btn-neutral float-right" title="dqcnac.nonlocal_gate_scheduling.nonlocal_operations module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, QSLab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

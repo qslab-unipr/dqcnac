@@ -1,0 +1,575 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dqcnac.compiler.local_manager &mdash; DQC-NAC 0.1.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=92734c54"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            DQC-NAC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html">DQC-NAC: a compiler for Distributed Quantum Computing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html#installation">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html#usage">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html#api-docs">API Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html#acknowledgements">Acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">dqcnac API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">DQC-NAC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">dqcnac.compiler.local_manager</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for dqcnac.compiler.local_manager</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Local compilation manager module.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuantumRegister</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit.circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">Barrier</span><span class="p">,</span> <span class="n">Qubit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit.dagcircuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">DAGCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit.transpiler</span><span class="w"> </span><span class="kn">import</span> <span class="n">CouplingMap</span><span class="p">,</span> <span class="n">Layout</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rustworkx</span><span class="w"> </span><span class="kn">import</span> <span class="n">NoEdgeBetweenNodes</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..local_routing</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasicRouter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..mapping.local_mapping</span><span class="w"> </span><span class="kn">import</span> <span class="n">External</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..network</span><span class="w"> </span><span class="kn">import</span> <span class="n">Network</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..nonlocal_gate_scheduling</span><span class="w"> </span><span class="kn">import</span> <span class="n">CatDisEntInst</span><span class="p">,</span> <span class="n">CatEntInst</span><span class="p">,</span> <span class="n">TeleportInst</span>
+
+
+<div class="viewcode-block" id="LocalManager">
+<a class="viewcode-back" href="../../../api/dqcnac.compiler.local_manager.html#dqcnac.compiler.local_manager.LocalManager">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LocalManager</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to manage local mapping and routing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="LocalManager.__init__">
+<a class="viewcode-back" href="../../../api/dqcnac.compiler.local_manager.html#dqcnac.compiler.local_manager.LocalManager.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">distributed_circuit</span><span class="p">:</span> <span class="n">DAGCircuit</span><span class="p">,</span>
+        <span class="n">network</span><span class="p">:</span> <span class="n">Network</span><span class="p">,</span>
+        <span class="n">partitions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Qubit</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+        <span class="n">mapper</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;dense&quot;</span><span class="p">,</span>
+        <span class="n">router</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;basic&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the local manager</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            distributed_circuit: an already distributed circuit</span>
+<span class="sd">            network: the network over which the circuit has been distributed</span>
+<span class="sd">            partitions: a mapping from qubits to network nodes ids</span>
+<span class="sd">            mapper: the local mapper to be used</span>
+<span class="sd">            router: the local router to be used</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span> <span class="o">=</span> <span class="n">mapper</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">router</span> <span class="o">=</span> <span class="n">router</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distributed_circ</span> <span class="o">=</span> <span class="n">distributed_circuit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">network</span> <span class="o">=</span> <span class="n">network</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">partitions</span> <span class="o">=</span> <span class="n">partitions</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_layout</span> <span class="o">=</span> <span class="n">Layout</span><span class="p">()</span>
+
+        <span class="c1"># dist circuit has multiple quantum registers, router needs only one</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dist_to_canonical</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="c1"># dictionary mapping nodes to their coupling map</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">couplings</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="c1"># dictionary mapping qubits in the network to qubits on the nodes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">network_to_local</span> <span class="o">=</span> <span class="p">{</span><span class="n">node</span><span class="p">:</span> <span class="nb">dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_couplings</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes_ebits</span> <span class="o">=</span> <span class="p">{</span><span class="n">node</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">}</span>
+        <span class="c1"># depending on configuration and inputs, compiler may not need or have access to all ebits of a device</span>
+        <span class="c1"># some will remain unutilized / used by other programs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extra_ebits</span> <span class="o">=</span> <span class="p">{</span><span class="n">node</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">conn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]][</span><span class="s2">&quot;conn&quot;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">nodes_ebits</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]][</span><span class="s2">&quot;conn&quot;</span><span class="p">][</span><span class="n">conn</span><span class="p">][</span>
+                        <span class="s2">&quot;ebits&quot;</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ebit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">ebits</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">ebit</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_ebits</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">extra_ebits</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ebit</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+            <span class="n">local_coupling</span> <span class="o">=</span> <span class="n">CouplingMap</span><span class="p">()</span>
+            <span class="n">ebits_indices</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+            <span class="n">extra_ebits_idx</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">coupling_map</span><span class="o">.</span><span class="n">physical_qubits</span><span class="p">:</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="n">local_coupling</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">q</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_ebits</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>
+                    <span class="n">extra_ebits_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+            <span class="c1"># remove unutilized ebits from graph, otherwise router will see them and try tu use them</span>
+            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">extra_ebits_idx</span><span class="p">:</span>
+                <span class="n">local_coupling</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">remove_node</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">coupling_map</span><span class="o">.</span><span class="n">get_edges</span><span class="p">():</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_ebits</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+                    <span class="ow">or</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_ebits</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+                <span class="p">):</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">ebits</span>
+                    <span class="ow">or</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">ebits</span>
+                <span class="p">):</span>
+                    <span class="k">if</span> <span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">ebits</span><span class="p">:</span>
+                        <span class="n">ebits_indices</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">ebits</span><span class="p">:</span>
+                        <span class="n">ebits_indices</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span>
+                        <span class="n">local_coupling</span><span class="p">,</span>
+                        <span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                        <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">coupling_map</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">*</span> <span class="mi">2</span><span class="p">),</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span>
+                        <span class="n">local_coupling</span><span class="p">,</span>
+                        <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                        <span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">coupling_map</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">*</span> <span class="mi">2</span><span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">local_coupling</span><span class="p">,</span> <span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mf">1.0</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">local_coupling</span><span class="p">,</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mf">1.0</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">couplings</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">node</span><span class="p">:</span> <span class="n">local_coupling</span><span class="p">})</span>
+            <span class="n">_local_coupling</span> <span class="o">=</span> <span class="n">CouplingMap</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">local_coupling</span><span class="o">.</span><span class="n">physical_qubits</span><span class="p">:</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="n">_local_coupling</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">local_coupling</span><span class="o">.</span><span class="n">get_edges</span><span class="p">():</span>
+                <span class="n">_local_coupling</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="o">*</span><span class="n">edge</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">ebit</span> <span class="ow">in</span> <span class="n">ebits_indices</span><span class="p">:</span>
+                <span class="n">neighbors</span> <span class="o">=</span> <span class="n">_local_coupling</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">ebit</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="p">:</span>
+                    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">_local_coupling</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">remove_edge</span><span class="p">(</span><span class="n">ebit</span><span class="p">,</span> <span class="n">neighbor</span><span class="p">)</span>
+                            <span class="n">_local_coupling</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">remove_edge</span><span class="p">(</span><span class="n">neighbor</span><span class="p">,</span> <span class="n">ebit</span><span class="p">)</span>
+                        <span class="k">except</span> <span class="n">NoEdgeBetweenNodes</span><span class="p">:</span>
+                            <span class="k">break</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_couplings</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">node</span><span class="p">:</span> <span class="n">_local_coupling</span><span class="p">})</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">new_dag</span> <span class="o">=</span> <span class="n">DAGCircuit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">canonical_reg</span> <span class="o">=</span> <span class="n">QuantumRegister</span><span class="p">(</span>
+            <span class="nb">sum</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">couplings</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">couplings</span><span class="p">]),</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;q&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">new_dag</span><span class="o">.</span><span class="n">add_qreg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">canonical_reg</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dist_to_canonical</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">_qubits</span> <span class="o">=</span> <span class="p">{</span><span class="n">node</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">}</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">dist_reg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">distributed_circ</span><span class="o">.</span><span class="n">qregs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s2">&quot;|&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dist_reg</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">qarg</span> <span class="ow">in</span> <span class="n">dist_reg</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">dist_to_canonical</span><span class="p">[</span><span class="n">qarg</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">canonical_reg</span><span class="p">[</span><span class="n">q</span><span class="p">]</span>
+                    <span class="n">_qubits</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">partitions</span><span class="p">[</span><span class="n">qarg</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">qarg</span><span class="p">)</span>
+                    <span class="n">q</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">coupling_map</span> <span class="o">=</span> <span class="n">CouplingMap</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">local_to_network</span> <span class="o">=</span> <span class="p">{</span><span class="n">node</span><span class="p">:</span> <span class="nb">dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">couplings</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ebits</span> <span class="o">=</span> <span class="p">{</span><span class="n">node</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">couplings</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qubits</span> <span class="o">=</span> <span class="p">{</span><span class="n">node</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">couplings</span><span class="p">}</span>
+        <span class="c1"># dictionary mapping circuit register to nodes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reg_to_node</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">ebits</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="c1"># create network coupling map, keep map between local qubit indices and network indices</span>
+        <span class="n">_q</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">canonical_reg</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">couplings</span><span class="p">:</span>
+            <span class="n">coupling</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">couplings</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">coupling</span><span class="o">.</span><span class="n">get_edges</span><span class="p">():</span>
+                <span class="n">_q0</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">_q1</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="s2">&quot;</span>
+
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_ebits</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+                    <span class="ow">or</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_ebits</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+                <span class="p">):</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">_q0</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_to_network</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">local_to_network</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">_q0</span><span class="p">:</span> <span class="n">_q</span><span class="p">})</span>
+                    <span class="k">if</span> <span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_ebits</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">ebits</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">_q0</span><span class="p">,</span> <span class="n">_q</span><span class="p">))</span>
+                        <span class="n">ebits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_q</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">qubits</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">_q0</span><span class="p">,</span> <span class="n">_q</span><span class="p">))</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">network_to_local</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                        <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">local_to_network</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="n">_q0</span><span class="p">]:</span> <span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span>
+                    <span class="p">)</span>
+
+                    <span class="n">_q</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="k">if</span> <span class="n">_q1</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_to_network</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">local_to_network</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">_q1</span><span class="p">:</span> <span class="n">_q</span><span class="p">})</span>
+                    <span class="k">if</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_ebits</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">ebits</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">_q1</span><span class="p">,</span> <span class="n">_q</span><span class="p">))</span>
+                        <span class="n">ebits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_q</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">qubits</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">_q1</span><span class="p">,</span> <span class="n">_q</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">network_to_local</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                        <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">local_to_network</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="n">_q1</span><span class="p">]:</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span>
+                    <span class="p">)</span>
+
+                    <span class="n">_q</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span>
+                    <span class="n">coupling_map</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">local_to_network</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="n">_q0</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">local_to_network</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="n">_q1</span><span class="p">],</span>
+                    <span class="mf">1.0</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="c1"># create global unique register, keep map between single registers and global register</span>
+        <span class="n">_ebits</span> <span class="o">=</span> <span class="p">{</span><span class="n">node</span><span class="p">:</span> <span class="p">{}</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">dist_reg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">distributed_circ</span><span class="o">.</span><span class="n">qregs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s2">&quot;|&quot;</span> <span class="ow">in</span> <span class="n">dist_reg</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                <span class="n">node</span> <span class="o">=</span> <span class="n">dist_reg</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dist_reg</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">initial_layout</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">canonical_reg</span><span class="p">[</span><span class="n">q</span><span class="p">],</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">local_to_network</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ebits</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">],</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">dist_to_canonical</span><span class="p">[</span><span class="n">_e</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">canonical_reg</span><span class="p">[</span><span class="n">q</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">reg_to_node</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">canonical_reg</span><span class="p">[</span><span class="n">q</span><span class="p">]:</span> <span class="n">node</span><span class="p">})</span>
+                    <span class="n">_ebits</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="n">_e</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">canonical_reg</span><span class="p">[</span><span class="n">q</span><span class="p">]</span>
+                    <span class="n">q</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">coupling_map</span> <span class="o">=</span> <span class="n">CouplingMap</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="n">coupling_map</span><span class="o">.</span><span class="n">physical_qubits</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">coupling_map</span><span class="o">.</span><span class="n">add_physical_qubit</span><span class="p">(</span><span class="n">qubit</span><span class="p">)</span>
+
+        <span class="c1"># add ebits to coupling map</span>
+        <span class="c1"># use big weight between ebits and other qubits</span>
+        <span class="c1"># to avoid router to choose those edges for swaps</span>
+        <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">coupling_map</span><span class="o">.</span><span class="n">get_edges</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">ebits</span> <span class="ow">or</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">ebits</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coupling_map</span><span class="p">,</span> <span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">float</span><span class="p">(</span><span class="n">width</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coupling_map</span><span class="p">,</span> <span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mf">1.0</span><span class="p">)</span>
+
+        <span class="n">_coup</span> <span class="o">=</span> <span class="n">CouplingMap</span><span class="p">()</span>
+        <span class="n">_coup</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coupling_map</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">to_undirected</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">local_circuits</span> <span class="o">=</span> <span class="p">{</span><span class="n">node</span><span class="p">:</span> <span class="n">DAGCircuit</span><span class="p">()</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dist_to_local</span> <span class="o">=</span> <span class="p">{</span><span class="n">node</span><span class="p">:</span> <span class="p">{}</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">local_to_dist</span> <span class="o">=</span> <span class="p">{</span><span class="n">node</span><span class="p">:</span> <span class="p">{}</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">}</span>
+
+        <span class="c1"># for local mapping, create local circuits for each device</span>
+        <span class="c1"># comprised of only local operations</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+            <span class="n">qr</span> <span class="o">=</span> <span class="n">QuantumRegister</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">mem_cap</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;qr&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">local_circuits</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">add_qreg</span><span class="p">(</span><span class="n">qr</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">qarg</span> <span class="ow">in</span> <span class="n">qr</span><span class="p">:</span>
+                <span class="n">dist</span> <span class="o">=</span> <span class="n">_qubits</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dist_to_local</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="n">dist</span><span class="p">]</span> <span class="o">=</span> <span class="n">qarg</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">local_to_dist</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="n">qarg</span><span class="p">]</span> <span class="o">=</span> <span class="n">dist</span>
+
+        <span class="k">for</span> <span class="n">gate</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">distributed_circ</span><span class="o">.</span><span class="n">topological_op_nodes</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">gate</span><span class="o">.</span><span class="n">qargs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="n">gate</span><span class="o">.</span><span class="n">op</span><span class="p">,</span> <span class="p">(</span><span class="n">CatEntInst</span><span class="p">,</span> <span class="n">CatDisEntInst</span><span class="p">,</span> <span class="n">TeleportInst</span><span class="p">,</span> <span class="n">Barrier</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="s2">&quot;|&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">gate</span><span class="o">.</span><span class="n">qargs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">_register</span><span class="o">.</span><span class="n">name</span>
+                    <span class="ow">and</span> <span class="s2">&quot;|&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">gate</span><span class="o">.</span><span class="n">qargs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">_register</span><span class="o">.</span><span class="n">name</span>
+                <span class="p">):</span>
+                    <span class="n">node0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">partitions</span><span class="p">[</span><span class="n">gate</span><span class="o">.</span><span class="n">qargs</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+                    <span class="n">node1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">partitions</span><span class="p">[</span><span class="n">gate</span><span class="o">.</span><span class="n">qargs</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+                    <span class="k">if</span> <span class="n">node0</span> <span class="o">==</span> <span class="n">node1</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">local_circuits</span><span class="p">[</span><span class="n">node0</span><span class="p">]</span><span class="o">.</span><span class="n">apply_operation_back</span><span class="p">(</span>
+                            <span class="n">gate</span><span class="o">.</span><span class="n">op</span><span class="p">,</span>
+                            <span class="n">qargs</span><span class="o">=</span><span class="p">(</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">dist_to_local</span><span class="p">[</span><span class="n">node0</span><span class="p">][</span><span class="n">gate</span><span class="o">.</span><span class="n">qargs</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">dist_to_local</span><span class="p">[</span><span class="n">node0</span><span class="p">][</span><span class="n">gate</span><span class="o">.</span><span class="n">qargs</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
+                            <span class="p">),</span>
+                        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">local_layouts</span> <span class="o">=</span> <span class="p">{</span><span class="n">node</span><span class="p">:</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">}</span>
+
+        <span class="c1"># do local mapping for each node</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span> <span class="o">==</span> <span class="s2">&quot;dense&quot;</span><span class="p">:</span>
+                <span class="c1"># The CouplingMap class from Qiskit only accepts contiguously indexed nodes starting at 0.</span>
+                <span class="c1"># The local coupling map nodes are not contiguously indexed, missing the ebits.</span>
+                <span class="c1"># Here we create a temporary mapping to avoid issues</span>
+                <span class="n">mapper_to_local</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+                <span class="n">local_to_mapper</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+                <span class="nb">locals</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+                <span class="n">_coupling_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_couplings</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">:</span>
+                        <span class="nb">locals</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                        <span class="n">local_to_mapper</span><span class="p">[</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">i</span>
+                        <span class="n">mapper_to_local</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">if</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">:</span>
+                        <span class="nb">locals</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="n">local_to_mapper</span><span class="p">[</span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">i</span>
+                        <span class="n">mapper_to_local</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">_coupling_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="p">[</span><span class="n">local_to_mapper</span><span class="p">[</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">local_to_mapper</span><span class="p">[</span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]]]</span>
+                    <span class="p">)</span>
+
+                <span class="n">local_mapper</span> <span class="o">=</span> <span class="n">External</span><span class="p">(</span><span class="s2">&quot;Dense&quot;</span><span class="p">,</span> <span class="n">_coupling_list</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mapper </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="si">}</span><span class="s2"> not defined.&quot;</span><span class="p">)</span>
+
+            <span class="n">mapper_layout</span> <span class="o">=</span> <span class="n">local_mapper</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">local_circuits</span><span class="p">[</span><span class="n">node</span><span class="p">])</span>
+            <span class="n">local_layout</span> <span class="o">=</span> <span class="n">Layout</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="n">mapper_to_local</span><span class="p">[</span><span class="n">q</span><span class="p">]:</span> <span class="n">mapper_layout</span><span class="p">[</span><span class="n">q</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">mapper_layout</span><span class="o">.</span><span class="n">get_physical_bits</span><span class="p">()</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">local_layouts</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">local_layout</span>
+
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">local_layout</span><span class="o">.</span><span class="n">get_physical_bits</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">initial_layout</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">dist_to_canonical</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">local_to_dist</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="n">local_layout</span><span class="p">[</span><span class="n">p</span><span class="p">]]],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">local_to_network</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reg_to_node</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">dist_to_canonical</span><span class="p">[</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">local_to_dist</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="n">local_layout</span><span class="p">[</span><span class="n">p</span><span class="p">]]</span>
+                        <span class="p">]:</span> <span class="n">node</span>
+                    <span class="p">}</span>
+                <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">partitions_dim</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">node1</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node1</span><span class="p">]</span><span class="o">.</span><span class="n">coupling_map</span><span class="o">.</span><span class="n">physical_qubits</span><span class="p">)</span>
+            <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node1</span><span class="p">]</span><span class="o">.</span><span class="n">connections</span><span class="p">[</span><span class="n">node2</span><span class="p">][</span><span class="s2">&quot;cap&quot;</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">node2</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node1</span><span class="p">]</span><span class="o">.</span><span class="n">connections</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">node1</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="LocalManager.add_edge">
+<a class="viewcode-back" href="../../../api/dqcnac.compiler.local_manager.html#dqcnac.compiler.local_manager.LocalManager.add_edge">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_edge</span><span class="p">(</span><span class="n">coupling_map</span><span class="p">:</span> <span class="n">CouplingMap</span><span class="p">,</span> <span class="n">src</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dst</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">weight</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a directed weighted edge to the *coupling_map* between *src* and *dst*</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            coupling_map: a coupling map</span>
+<span class="sd">            src: the source node</span>
+<span class="sd">            dst: the destination node</span>
+<span class="sd">            weight: the weight of the edge</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">src</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">coupling_map</span><span class="o">.</span><span class="n">physical_qubits</span><span class="p">:</span>
+            <span class="n">coupling_map</span><span class="o">.</span><span class="n">add_physical_qubit</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">dst</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">coupling_map</span><span class="o">.</span><span class="n">physical_qubits</span><span class="p">:</span>
+            <span class="n">coupling_map</span><span class="o">.</span><span class="n">add_physical_qubit</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span>
+        <span class="n">coupling_map</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span>
+
+        <span class="n">coupling_map</span><span class="o">.</span><span class="n">_dist_matrix</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">coupling_map</span><span class="o">.</span><span class="n">_is_symmetric</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">coupling_map</span><span class="o">.</span><span class="n">_size</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="LocalManager.run">
+<a class="viewcode-back" href="../../../api/dqcnac.compiler.local_manager.html#dqcnac.compiler.local_manager.LocalManager.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">DAGCircuit</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Qubit</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span> <span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the local manager</span>
+
+<span class="sd">        Returns: the compiled circuit, a mapping from the network physical qubits and circuit virtual qubits,</span>
+<span class="sd">        a mapping from network physical qubits to physical qubits of each node coupling map</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># recreate the circuit using the global register</span>
+        <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">distributed_circ</span><span class="o">.</span><span class="n">serial_layers</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">gate</span> <span class="ow">in</span> <span class="n">layer</span><span class="p">[</span><span class="s2">&quot;graph&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">topological_op_nodes</span><span class="p">():</span>
+
+                <span class="n">new_qargs</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dist_to_canonical</span><span class="p">[</span><span class="n">qarg</span><span class="p">]</span> <span class="k">for</span> <span class="n">qarg</span> <span class="ow">in</span> <span class="n">gate</span><span class="o">.</span><span class="n">qargs</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gate</span><span class="o">.</span><span class="n">op</span><span class="p">,</span> <span class="n">TeleportInst</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">reg_to_node</span><span class="p">[</span><span class="n">new_qargs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+                        <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reg_to_node</span><span class="p">[</span><span class="n">new_qargs</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]]</span>
+                    <span class="p">):</span>
+                        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">new_qargs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> not on same node as </span><span class="si">{</span><span class="n">new_qargs</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2"> in Teleport instruction: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reg_to_node</span><span class="p">[</span><span class="n">new_qargs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span><span class="si">}</span><span class="s2">- </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reg_to_node</span><span class="p">[</span><span class="n">new_qargs</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]]</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">new_dag</span><span class="o">.</span><span class="n">apply_operation_back</span><span class="p">(</span><span class="n">gate</span><span class="o">.</span><span class="n">op</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">new_qargs</span><span class="p">))</span>
+
+        <span class="c1"># do local routing</span>
+        <span class="n">final_layout</span> <span class="o">=</span> <span class="n">Layout</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">router</span> <span class="o">==</span> <span class="s2">&quot;basic&quot;</span><span class="p">:</span>
+            <span class="n">compiled_circuit</span><span class="p">,</span> <span class="n">final_layout</span> <span class="o">=</span> <span class="n">BasicRouter</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">coupling_map</span><span class="p">,</span>
+                <span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">ebits</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ebits</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">ebits</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">initial_layout</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">network_to_local</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reg_to_node</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">couplings</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">new_dag</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">router</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">compiled_circuit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_dag</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Router </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">router</span><span class="si">}</span><span class="s2"> not implemented.&quot;</span><span class="p">)</span>
+
+        <span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">number_of_edges</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">gate</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">compiled_circuit</span><span class="o">.</span><span class="n">op_nodes</span><span class="p">(</span><span class="n">Barrier</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gate</span><span class="o">.</span><span class="n">op</span><span class="p">,</span> <span class="n">Barrier</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">gate</span><span class="o">.</span><span class="n">qargs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="n">compiled_circuit</span><span class="o">.</span><span class="n">remove_op_node</span><span class="p">(</span><span class="n">gate</span><span class="p">)</span>
+
+        <span class="c1"># Initial barriers may be an issued here</span>
+        <span class="k">for</span> <span class="n">wire</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">compiled_circuit</span><span class="o">.</span><span class="n">idle_wires</span><span class="p">()):</span>
+            <span class="n">compiled_circuit</span><span class="o">.</span><span class="n">_remove_idle_wire</span><span class="p">(</span><span class="n">wire</span><span class="p">)</span>
+
+        <span class="n">compiled_dag</span> <span class="o">=</span> <span class="n">DAGCircuit</span><span class="p">()</span>
+        <span class="n">canonical_to_dist</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">value</span><span class="p">:</span> <span class="n">key</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dist_to_canonical</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">compiled_circuit</span><span class="o">.</span><span class="n">cregs</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">creg</span> <span class="ow">in</span> <span class="n">compiled_circuit</span><span class="o">.</span><span class="n">cregs</span><span class="p">:</span>
+                <span class="n">compiled_dag</span><span class="o">.</span><span class="n">add_creg</span><span class="p">(</span><span class="n">creg</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">gate</span> <span class="ow">in</span> <span class="n">compiled_circuit</span><span class="o">.</span><span class="n">topological_op_nodes</span><span class="p">():</span>
+            <span class="n">op</span> <span class="o">=</span> <span class="n">gate</span><span class="o">.</span><span class="n">op</span>
+            <span class="n">qargs</span> <span class="o">=</span> <span class="n">gate</span><span class="o">.</span><span class="n">qargs</span>
+            <span class="n">new_qargs</span> <span class="o">=</span> <span class="p">[</span><span class="n">canonical_to_dist</span><span class="p">[</span><span class="n">qarg</span><span class="p">]</span> <span class="k">for</span> <span class="n">qarg</span> <span class="ow">in</span> <span class="n">qargs</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">qarg</span> <span class="ow">in</span> <span class="n">new_qargs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">qarg</span><span class="o">.</span><span class="n">_register</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">compiled_dag</span><span class="o">.</span><span class="n">qregs</span><span class="p">:</span>
+                    <span class="n">compiled_dag</span><span class="o">.</span><span class="n">add_qreg</span><span class="p">(</span><span class="n">qarg</span><span class="o">.</span><span class="n">_register</span><span class="p">)</span>
+
+            <span class="n">compiled_dag</span><span class="o">.</span><span class="n">apply_operation_back</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">qargs</span><span class="o">=</span><span class="n">new_qargs</span><span class="p">,</span> <span class="n">cargs</span><span class="o">=</span><span class="n">gate</span><span class="o">.</span><span class="n">cargs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">compiled_dag</span><span class="p">,</span>
+            <span class="p">{</span>
+                <span class="n">key</span><span class="p">:</span> <span class="n">canonical_to_dist</span><span class="p">[</span><span class="n">value</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_layout</span><span class="o">.</span><span class="n">get_physical_bits</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="nb">int</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]))</span>
+                <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_to_network</span>
+                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_to_network</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="n">key</span><span class="p">:</span> <span class="n">canonical_to_dist</span><span class="p">[</span><span class="n">value</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">final_layout</span><span class="o">.</span><span class="n">get_physical_bits</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">},</span>
+        <span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, QSLab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
