@@ -7,7 +7,7 @@ It allows to assign qubits to different QPUs in a quantum network, and insert re
 
 To install in your python environment, run:
 ```
-pip install dist/dqcnac-0.2.0-py3-none-any.whl
+pip install dist/dqcnac-0.3.0-py3-none-any.whl
 ```
 
 # Usage
