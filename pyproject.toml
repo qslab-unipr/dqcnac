@@ -1,0 +1,35 @@
+[build-system]
+requires = ["hatchling >= 1.26"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["dqcnac"]
+
+[project]
+name = "dqcnac"
+version = "0.3.0"
+authors = [
+    { name="Michele Amoretti", email="michele.amoretti@unipr.it" },
+    { name="Michele Bandini", email="michele.bandini@unipr.it" },
+    { name="Davide Ferrari", email="davide.ferrari1@unipr.it" }
+]
+description = "Prototype of compiler for distributed quantum computing programs"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "networkx==3.1",
+    "rustworkx>=0.13.0",
+    "numpy==1.22.4",
+    "qiskit==0.46.0",
+    "pymetis==2023.1.1",
+    "qoala==1.0.1.dev68",
+    "PyYAML>=6.0.1",
+    "typing_extensions>=4.15.0"
+
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: POSIX :: Linux"
+]
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
