@@ -1,7 +1,7 @@
 # DQC-NAC: a compiler for Distributed Quantum Computing
 
-DQC-NAC is compiler package that can distribute monolithic quantum circuits written as DAGCircuits, into a distributed quantum circuit.
-It allows to assign qubits to different QPUs in a quantum network, and insert remote gates to handle quantum gates between across QPU's.
+DQC-NAC is compiler package that can distribute monolithic quantum circuits into distributed quantum circuits.
+It allows to assign qubits to different QPUs in a quantum network, trying to optimize the number of non-local gates across QPUs.
 
 # Installation
 
@@ -21,3 +21,4 @@ All API documentation can be accessed through docs/build/html/index.html
 # Acknowledgements
 
 This work was funded by the European Union's Horizon Europe research and innovation programme under grant agreement No. 101102140 – QIA Phase 1. Furthermore, this work benefited from the High Performance Computing facility at the University of Parma, Italy.
+
