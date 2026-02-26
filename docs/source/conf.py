@@ -54,9 +54,9 @@ language = 'en'
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'DQC-NAC'
-copyright = '2026, QSLab'
-author = 'QSLab'
-release = '0.1.2'
+copyright = '2026, Michele Amoretti, Michele Bandini, Davide Ferrari'
+author = 'Michele Amoretti, Michele Bandini, Davide Ferrari'
+release = '0.3.0'
 
 import os
 import sys
