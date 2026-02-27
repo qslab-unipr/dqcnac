@@ -1,4 +1,4 @@
-# DQC-NAC: a compiler for Distributed Quantum Computing
+# DQC-NAC: a Noise Aware Compiler for Distributed Quantum Computing
 
 DQC-NAC is compiler package that can distribute monolithic quantum circuits into distributed quantum circuits.
 It allows to assign qubits to different QPUs in a quantum network, trying to optimize the number of non-local gates across QPUs.
