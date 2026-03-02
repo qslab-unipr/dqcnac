@@ -32,7 +32,9 @@ jobs:
     - name: Build Sphinx
       run: |
         cd docs/source
-        sphinx-build . ../build/html -b html
+        rm -rf ../build/html  # Clear cache
+        touch conf.py
+        sphinx-build . ../build/html -b html -W --keep-going
 
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
