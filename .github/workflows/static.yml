@@ -30,8 +30,8 @@ jobs:
 
     - name: Build Sphinx
       run: |
-        cd docs
-        sphinx-build sources/ build/html -b html
+        cd docs/source
+        sphinx-build . ../build/html -b html
 
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
