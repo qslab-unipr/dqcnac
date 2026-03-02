@@ -26,8 +26,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install --upgrade pip
-        pip install numpy networkx pyyaml
-        pip install -e .
+        pip install numpy networkx pyyaml qiskit
         pip install sphinx sphinxcontrib-napoleon sphinx-rtd-theme
 
     - name: Build Sphinx
