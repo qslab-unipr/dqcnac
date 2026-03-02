@@ -79,7 +79,7 @@ napoleon_include_special_with_doc = False
 napoleon_use_param = True
 napoleon_use_rtype = True
 
-autodoc_mock_imports = ["yaml", "netqasm", "qoala", "qoala_output", "networkx"]
+autodoc_mock_imports = ["qiskit", "yaml", "netqasm", "qoala", "qoala_output", "networkx"]
 
 templates_path = ['_templates']
 exclude_patterns = []
@@ -91,3 +91,4 @@ language = 'en'
 
 html_theme = "sphinx_rtd_theme"
 html_static_path = ['_static']
+
