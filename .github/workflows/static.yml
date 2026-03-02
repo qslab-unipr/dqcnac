@@ -29,9 +29,9 @@ jobs:
 
     - name: Build Sphinx
       run: |
-        cd docs/source
-        rm -rf ../build/html  # Clear cache
-        sphinx-build . ../build/html -b html
+        sphinx-apidoc -f -o docs/source/api dqcnac/ -e -M
+        cd docs/
+        make clean html
 
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
