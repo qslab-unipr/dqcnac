@@ -2,7 +2,7 @@ name: Deploy Sphinx to GitHub Pages
 
 on:
   push:
-    branches: [ main ]  # Change to your default branch if different
+    branches: [ docs_pages, main ]  # Change to your default branch if different
   workflow_dispatch:   # Allows manual trigger
 
 permissions:
