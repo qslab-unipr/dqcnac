@@ -25,17 +25,7 @@ jobs:
       run: |
         pip install --upgrade pip
         pip install sphinx sphinx-rtd-theme
-        
-        # Pre-mock deps BEFORE Sphinx (bypasses autodoc_mock_imports timing)
-        cd docs/source
-        python -c "
-        import sys, unittest.mock
-        sys.path.insert(0, '../../')
-        mocks = ['qiskit', 'numpy', 'pymetis', 'yaml', 'netqasm', 'qoala', 'qoala_output', 'networkx']
-        for mod in mocks:
-          sys.modules[mod] = unittest.mock.MagicMock()
-        sys.modules['pymetis'].metis = unittest.mock.MagicMock()  # For 'import pymetis as mt'
-        "
+        pip install numpy networkx qiskit pymetis
 
     - name: Build Sphinx
       run: |
