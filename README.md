@@ -16,7 +16,7 @@ See the examples folder for examples on how to use the different features of the
 
 # API Docs
 
-All API documentation can be accessed through docs/build/html/index.html
+All API documentation can be accessed through https://qslab-unipr.github.io/dqcnac/index.html
 
 # Acknowledgements
 
