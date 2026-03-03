@@ -1,12 +1,15 @@
 """Compilation manager module."""
+from typing import Dict, Tuple
 
 from qiskit import QuantumCircuit
 from qiskit.circuit import Qubit
 from qiskit.converters import circuit_to_dag, dag_to_circuit
+from qoala.lang.program import QoalaProgram
 
 from ..mapping import circuit_partitioning
 from ..network import Network
 from ..nonlocal_gate_scheduling import NonlocalGateSchedule, state_to_dag
+from ..parser import InstrToBlock
 from .gate_grouping import GateGrouping
 from .local_manager import LocalManager
 
@@ -46,7 +49,15 @@ class CompileManager:
         max_gates_in_a_group: int = 0,
         print_non_local_gates=False,
         check_commutations=True,
-    ) -> tuple[QuantumCircuit, dict[Qubit, tuple[str, int]], dict]:
+        parse=False,
+    ) -> tuple[
+        QuantumCircuit,
+        dict[Qubit, tuple[str, int]],
+        Dict[int, Tuple[str, int]],
+        Dict[Qubit, Qubit],
+        Dict[str, QoalaProgram],
+        Dict[str, Qubit],
+    ]:
 
         """
         The run method of the CompilerManager
@@ -59,6 +70,7 @@ class CompileManager:
             max_gates_in_a_group: if not 0, the max number of gates allowed in a group if pre_pass is True
             print_non_local_gates: whether to print information about non-local gates
             check_commutations: whether to check for swaps between gates
+            parse: whether to parse the circuit into a Qoala program
 
         Returns:
             the distributed circuit, a mapping from the network physical qubits and circuit virtual qubits,
@@ -105,6 +117,34 @@ class CompileManager:
 
         compiled_circuit = dag_to_circuit(compiled_circuit)
 
+        network_to_local: Dict[Qubit, Tuple[str, int]] = {
+            v: network_layout[k] for k, v in layout.items()
+        }
+        if parse:
+            programs, measured = InstrToBlock(
+                compiled_circuit, network_to_local, network
+            ).run()
+
+            local_to_network = {v: k for k, v in network_layout.items()}
+            reverse_mapping = {state.mapping[k]: k for k in state.mapping}
+
+            measured = {
+                f"p{m[1]}": regs_mapping[
+                    reverse_mapping[final_layout[local_to_network[m]]]
+                ]
+                for m in measured
+            }
+        else:
+            programs = {}
+            measured = {}
+
         network_to_local = {v: network_layout[k] for k, v in layout.items()}
 
-        return compiled_circuit, network_to_local, regs_mapping
+        return (
+            compiled_circuit,
+            network_to_local,
+            network_layout,
+            regs_mapping,
+            programs,
+            measured,
+        )

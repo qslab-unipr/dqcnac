@@ -1,6 +1,8 @@
 import sys
 from pathlib import Path
 
+from dqcnac.parser import InstrToBlock
+
 # Ensure project root is on sys.path
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
@@ -9,20 +11,21 @@ if str(PROJECT_ROOT) not in sys.path:
 from os import path
 from timeit import default_timer as timer
 
-from dqcnac.compiler import CompileManager
-from dqcnac.network_configuration import simple_network
-from dqcnac.stats import get_num_epr
 from qiskit import transpile
 from qiskit.circuit import QuantumCircuit
 
-device_type = sys.argv[1]
+from dqcnac.compiler import CompileManager
+from dqcnac.network_configuration import simple_network
+from dqcnac.stats import get_num_epr
 
-n_nodes = int(sys.argv[2])
-network_topology = sys.argv[3]
+device_type: str = sys.argv[1]
+
+n_nodes: int = int(sys.argv[2])
+network_topology: str = sys.argv[3]
 network = simple_network(n_nodes, device_type, network_topology)
 
-circuit_type = sys.argv[4]
-n_qubits = int(sys.argv[5])
+circuit_type: str = sys.argv[4]
+n_qubits: int = int(sys.argv[5])
 
 print("###### START ######")
 
@@ -33,6 +36,7 @@ try:
             f"benchmark_circuits/{circuit_type}_n{n_qubits}.qasm",
         )
     )
+
 except OSError:
     print("BAD INPUT CIRCUIT")
     print("###### STOP WITH ERROR ######")
@@ -44,16 +48,16 @@ transpiled = transpile(
     optimization_level=3,
 )
 
-compiler = CompileManager(router=None)
+compiler = CompileManager()
 
 if sys.argv[6] == "True":
     use_tel = True
 else:
     use_tel = False
 if sys.argv[7] == "True":
-    use_pre_pass = True
+    use_gate_grouping = True
 else:
-    use_pre_pass = False
+    use_gate_grouping = False
 if len(sys.argv) >= 9:
     max_gates_in_a_group = int(sys.argv[8])
 else:
@@ -67,14 +71,22 @@ if __name__ == "__main__":
     print("INPUT DEPTH: ", circuit.depth())
     start = timer()
     print_non_local_gates = True
-    compiled_circuit, layout, network_layout, = compiler.run(
+    (
+        compiled_circuit,
+        network_to_local,
+        network_layout,
+        regs_mapping,
+        programs,
+        measured,
+    ) = compiler.run(
         transpiled,
         network,
         use_tel,
-        use_pre_pass,
+        use_gate_grouping,
         max_gates_in_a_group,
         print_non_local_gates,
         check_commutations,
+        parse=True,
     )
     stop = timer()
     print("OUTPUT DEPTH = ", compiled_circuit.depth())
@@ -82,3 +94,6 @@ if __name__ == "__main__":
     delta = stop - start
     print("Elapsed time [s]: ", delta)
     print("###### STOP ######")
+
+    for p in programs:
+        print(p, programs[p].serialize())

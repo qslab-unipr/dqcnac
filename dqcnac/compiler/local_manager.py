@@ -136,6 +136,8 @@ class LocalManager:
                         except NoEdgeBetweenNodes:
                             break
 
+                _local_coupling.graph.remove_node(ebit)
+
             self._couplings.update({node: _local_coupling})
 
         self.new_dag = DAGCircuit()
@@ -404,6 +406,7 @@ class LocalManager:
             ).run(self.new_dag)
         elif self.router is None:
             compiled_circuit = self.new_dag
+            final_layout = self.initial_layout
         else:
             raise Exception(f"Router {self.router} not implemented.")
 

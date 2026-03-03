@@ -76,6 +76,8 @@
              
   <h1>Source code for dqcnac.parser.dag_to_qoala</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;QuantumCircuit to QoalaPrograms parser call module.&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">netqasm.lang.encoding</span><span class="w"> </span><span class="kn">import</span> <span class="n">RegisterName</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">netqasm.lang.instr.core</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
@@ -142,7 +144,6 @@
         <span class="n">compiled_circuit</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span>
         <span class="n">network_to_local</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">network_config</span><span class="p">:</span> <span class="n">Network</span><span class="p">,</span>
-        <span class="n">layout</span><span class="p">:</span> <span class="n">Layout</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize the parser</span>
@@ -151,12 +152,10 @@
 <span class="sd">            compiled_circuit: a distributed circuit</span>
 <span class="sd">            network_to_local: a mapping from the circuit virtual qubits to physical qubits on network nodes</span>
 <span class="sd">            network_config: the network configuration</span>
-<span class="sd">            layout: the mapping of qubits</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">operations</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">qubits_list</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="o">=</span> <span class="n">layout</span>
         <span class="k">for</span> <span class="n">inst</span> <span class="ow">in</span> <span class="n">compiled_circuit</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
             <span class="n">qubits</span> <span class="o">=</span> <span class="p">[</span><span class="n">network_to_local</span><span class="p">[</span><span class="n">qubit</span><span class="p">]</span> <span class="k">for</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="n">inst</span><span class="o">.</span><span class="n">qubits</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inst</span><span class="o">.</span><span class="n">operation</span><span class="p">)</span>
@@ -204,7 +203,11 @@
             <span class="n">sockets</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">metas</span><span class="p">[</span><span class="n">node_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ProgramMeta</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">[],</span> <span class="n">csockets</span><span class="o">=</span><span class="p">{},</span> <span class="n">epr_sockets</span><span class="o">=</span><span class="p">{}</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="n">parameters</span><span class="o">=</span><span class="p">[],</span>
+                <span class="n">csockets</span><span class="o">=</span><span class="p">{},</span>
+                <span class="n">epr_sockets</span><span class="o">=</span><span class="p">{},</span>
+                <span class="n">critical_sections</span><span class="o">=</span><span class="p">{},</span>
             <span class="p">)</span>
             <span class="n">metas</span><span class="p">[</span><span class="n">node_name</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">node_name</span>
             <span class="k">for</span> <span class="n">connecting_node</span><span class="p">,</span> <span class="n">dist</span> <span class="ow">in</span> <span class="n">dists</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -256,6 +259,26 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">nodes_with_blocks</span><span class="p">[</span><span class="n">node_name</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">nodes_with_blocks</span><span class="p">[</span><span class="n">node_name</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prepare_routine</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">block_i</span><span class="p">[</span><span class="n">node_name</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_approx_angle</span><span class="p">(</span><span class="n">theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute n and d such that n*pi/2^d is close to theta</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            theta: an angle in radians</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            n and d such that n*pi/2^d is close to theta</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fraction</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">theta</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+        <span class="n">d</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">math</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">fraction</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">d</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">fraction</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">d</span><span class="p">))):</span>
+            <span class="n">d</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fraction</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">d</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">math</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">n</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="o">**</span><span class="n">d</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_from_instr_to_block</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -317,11 +340,12 @@
                     <span class="n">qubit</span> <span class="o">=</span> <span class="n">qubits</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
                     <span class="n">node</span> <span class="o">=</span> <span class="n">qubits</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
                     <span class="n">routine_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;rx_routine</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">block_i</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_approx_angle</span><span class="p">(</span><span class="n">operation</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                     <span class="n">rx_routine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rx_subroutine</span><span class="p">(</span>
                         <span class="n">routine_name</span><span class="p">,</span>
                         <span class="n">qubit</span><span class="p">,</span>
-                        <span class="n">operation</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">],</span>
-                        <span class="n">operation</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;d&quot;</span><span class="p">],</span>
+                        <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
                     <span class="p">)</span>
                     <span class="n">ops</span> <span class="o">=</span> <span class="p">[</span><span class="n">RunSubroutineOp</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">IqoalaTuple</span><span class="p">([]),</span> <span class="n">routine_name</span><span class="p">)]</span>
                     <span class="n">block</span> <span class="o">=</span> <span class="n">BasicBlock</span><span class="p">(</span>
@@ -334,11 +358,12 @@
                     <span class="n">qubit</span> <span class="o">=</span> <span class="n">qubits</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
                     <span class="n">node</span> <span class="o">=</span> <span class="n">qubits</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
                     <span class="n">routine_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;ry_routine</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">block_i</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_approx_angle</span><span class="p">(</span><span class="n">operation</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                     <span class="n">ry_routine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ry_subroutine</span><span class="p">(</span>
                         <span class="n">routine_name</span><span class="p">,</span>
                         <span class="n">qubit</span><span class="p">,</span>
-                        <span class="n">operation</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">],</span>
-                        <span class="n">operation</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;d&quot;</span><span class="p">],</span>
+                        <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
                     <span class="p">)</span>
                     <span class="n">ops</span> <span class="o">=</span> <span class="p">[</span><span class="n">RunSubroutineOp</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">IqoalaTuple</span><span class="p">([]),</span> <span class="n">routine_name</span><span class="p">)]</span>
                     <span class="n">block</span> <span class="o">=</span> <span class="n">BasicBlock</span><span class="p">(</span>
@@ -351,11 +376,12 @@
                     <span class="n">qubit</span> <span class="o">=</span> <span class="n">qubits</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
                     <span class="n">node</span> <span class="o">=</span> <span class="n">qubits</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
                     <span class="n">routine_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;rz_routine</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">block_i</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_approx_angle</span><span class="p">(</span><span class="n">operation</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                     <span class="n">rz_routine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rz_subroutine</span><span class="p">(</span>
                         <span class="n">routine_name</span><span class="p">,</span>
                         <span class="n">qubit</span><span class="p">,</span>
-                        <span class="n">operation</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">],</span>
-                        <span class="n">operation</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;d&quot;</span><span class="p">],</span>
+                        <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
                     <span class="p">)</span>
                     <span class="n">ops</span> <span class="o">=</span> <span class="p">[</span><span class="n">RunSubroutineOp</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">IqoalaTuple</span><span class="p">([]),</span> <span class="n">routine_name</span><span class="p">)]</span>
                     <span class="n">block</span> <span class="o">=</span> <span class="n">BasicBlock</span><span class="p">(</span>

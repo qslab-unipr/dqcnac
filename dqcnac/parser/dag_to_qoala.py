@@ -1,4 +1,6 @@
 """QuantumCircuit to QoalaPrograms parser call module."""
+import math
+from typing import Tuple
 
 from netqasm.lang.encoding import RegisterName
 from netqasm.lang.instr.core import (
@@ -61,7 +63,6 @@ class InstrToBlock:
         compiled_circuit: QuantumCircuit,
         network_to_local: dict,
         network_config: Network,
-        layout: Layout,
     ):
         """
         Initialize the parser
@@ -70,12 +71,10 @@ class InstrToBlock:
             compiled_circuit: a distributed circuit
             network_to_local: a mapping from the circuit virtual qubits to physical qubits on network nodes
             network_config: the network configuration
-            layout: the mapping of qubits
         """
 
         self.operations = []
         self.qubits_list = []
-        self.layout = layout
         for inst in compiled_circuit.data:
             qubits = [network_to_local[qubit] for qubit in inst.qubits]
             self.operations.append(inst.operation)
@@ -119,7 +118,11 @@ class InstrToBlock:
             sockets[node] = {}
             i = 0
             metas[node_name] = ProgramMeta(
-                name="", parameters=[], csockets={}, epr_sockets={}
+                name="",
+                parameters=[],
+                csockets={},
+                epr_sockets={},
+                critical_sections={},
             )
             metas[node_name].name = node_name
             for connecting_node, dist in dists.items():
@@ -171,6 +174,26 @@ class InstrToBlock:
             self.nodes_with_blocks[node_name][0].append(block)
             self.nodes_with_blocks[node_name][1].append(prepare_routine)
             self.block_i[node_name] += 1
+
+    @staticmethod
+    def _approx_angle(theta: float) -> Tuple[int, int]:
+        """
+        Compute n and d such that n*pi/2^d is close to theta
+
+        Args:
+            theta: an angle in radians
+
+        Returns:
+            n and d such that n*pi/2^d is close to theta
+        """
+        fraction: float = theta / math.pi
+        d: int = 0
+        while not math.isclose(fraction * (2**d), int(fraction * (2**d))):
+            d += 1
+        n = int(fraction * (2**d))
+        assert math.isclose(theta, n * math.pi / 2**d)
+
+        return n, d
 
     def _from_instr_to_block(self):
         """
@@ -232,11 +255,12 @@ class InstrToBlock:
                     qubit = qubits[0][1]
                     node = qubits[0][0]
                     routine_name = f"rx_routine{self.block_i[node]}"
+                    params = self._approx_angle(operation.params[0])
                     rx_routine = self.rx_subroutine(
                         routine_name,
                         qubit,
-                        operation.params["n"],
-                        operation.params["d"],
+                        params[0],
+                        params[1],
                     )
                     ops = [RunSubroutineOp(None, IqoalaTuple([]), routine_name)]
                     block = BasicBlock(
@@ -249,11 +273,12 @@ class InstrToBlock:
                     qubit = qubits[0][1]
                     node = qubits[0][0]
                     routine_name = f"ry_routine{self.block_i[node]}"
+                    params = self._approx_angle(operation.params[0])
                     ry_routine = self.ry_subroutine(
                         routine_name,
                         qubit,
-                        operation.params["n"],
-                        operation.params["d"],
+                        params[0],
+                        params[1],
                     )
                     ops = [RunSubroutineOp(None, IqoalaTuple([]), routine_name)]
                     block = BasicBlock(
@@ -266,11 +291,12 @@ class InstrToBlock:
                     qubit = qubits[0][1]
                     node = qubits[0][0]
                     routine_name = f"rz_routine{self.block_i[node]}"
+                    params = self._approx_angle(operation.params[0])
                     rz_routine = self.rz_subroutine(
                         routine_name,
                         qubit,
-                        operation.params["n"],
-                        operation.params["d"],
+                        params[0],
+                        params[1],
                     )
                     ops = [RunSubroutineOp(None, IqoalaTuple([]), routine_name)]
                     block = BasicBlock(

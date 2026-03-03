@@ -217,6 +217,8 @@
                         <span class="k">except</span> <span class="n">NoEdgeBetweenNodes</span><span class="p">:</span>
                             <span class="k">break</span>
 
+                <span class="n">_local_coupling</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">remove_node</span><span class="p">(</span><span class="n">ebit</span><span class="p">)</span>
+
             <span class="bp">self</span><span class="o">.</span><span class="n">_couplings</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">node</span><span class="p">:</span> <span class="n">_local_coupling</span><span class="p">})</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">new_dag</span> <span class="o">=</span> <span class="n">DAGCircuit</span><span class="p">()</span>
@@ -491,6 +493,7 @@
             <span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">new_dag</span><span class="p">)</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">router</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">compiled_circuit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_dag</span>
+            <span class="n">final_layout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_layout</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Router </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">router</span><span class="si">}</span><span class="s2"> not implemented.&quot;</span><span class="p">)</span>
 

@@ -22,7 +22,7 @@ features of the package
 API Docs
 ========
 
-All API documentation can be accessed through docs/build/html/index.html
+All API documentation can be accessed through https://qslab-unipr.github.io/dqcnac/index.html
 
 Acknowledgements
 ================
